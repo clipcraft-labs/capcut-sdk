@@ -1,12 +1,143 @@
-# CLI
+# CLI reference
+
+The `capcut` command uses the default local profile automatically. The first
+catalog command creates that profile if it does not exist.
+
+## Profile management
 
 ```bash
-capcut effects search "blur"
-capcut panels info --panel effects2
-capcut music collections
-capcut templates collections
-capcut templates list <collection-id> --cursor 0
+capcut auth profile list
+capcut auth profile show [name]
+capcut auth profile set [name] \
+  [--device-id VALUE] \
+  [--iid VALUE] \
+  [--region VALUE] \
+  [--language VALUE] \
+  [--mode offline|live|replay]
 ```
 
-Use `capcut call` for any operation documented in the API Reference that does
-not yet have a typed resource command.
+Examples:
+
+```bash
+capcut auth profile list
+capcut auth profile show default
+capcut auth profile set default --region KR --language ko-KR
+```
+
+## API status
+
+Display the SDK operation inventory:
+
+```bash
+capcut api status
+```
+
+## Effects and materials
+
+Search effects:
+
+```bash
+capcut effects search QUERY [--offset N] [--count N]
+capcut effects search blur
+capcut effects search blur --offset 50 --count 50
+```
+
+Get suggested search terms:
+
+```bash
+capcut effects words
+```
+
+Inspect a material panel:
+
+```bash
+capcut panels info [--panel NAME]
+capcut panels info --panel effects2
+```
+
+## Music
+
+List music collections:
+
+```bash
+capcut music collections
+```
+
+List songs in a collection:
+
+```bash
+capcut music songs COLLECTION_ID [--offset N]
+capcut music songs 123456 --offset 0
+```
+
+## Templates
+
+List template collections:
+
+```bash
+capcut templates collections
+```
+
+List templates with a cursor:
+
+```bash
+capcut templates list COLLECTION_ID [--cursor VALUE]
+capcut templates list 123456 --cursor 0
+```
+
+## AIGC helpers
+
+Request random prompts for one or more model names:
+
+```bash
+capcut aigc prompts MODEL [MODEL ...] [--scene NAME]
+capcut aigc prompts artistic_text
+capcut aigc prompts artistic_text portrait --scene default
+```
+
+## Configuration
+
+Get effect configuration:
+
+```bash
+capcut config effect-general [--scene NAME]
+capcut config effect-general --scene default
+```
+
+Get remote application settings:
+
+```bash
+capcut config remote-settings
+```
+
+## Raw OpenAPI calls
+
+Use `capcut call` for any documented operation that does not yet have a typed
+resource command:
+
+```bash
+capcut call PATH REQUEST_JSON
+capcut call --method GET PATH
+capcut call --method POST PATH REQUEST_JSON
+```
+
+Examples:
+
+```bash
+capcut call /artist/v1/effect/search request.json
+capcut call --method GET /model/api/arithmetics
+capcut call --method POST /artist/v1/effect/general_config request.json
+```
+
+`REQUEST_JSON` is a local JSON file. The CLI signs requests through the
+built-in `CapCutSigner` and uses the active profile's device and locale
+settings.
+
+## Common behavior
+
+- Catalog requests use the default profile automatically.
+- `has_more` responses expose `next_offset` or `next_cursor` for pagination.
+- Login-required operations may return an authentication error with generated
+  identifiers.
+- Do not put real device identifiers, cookies, or response dumps in source
+  control.
