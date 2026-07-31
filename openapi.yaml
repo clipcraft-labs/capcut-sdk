@@ -95,7 +95,14 @@ paths:
       tags: [Materials]
       operationId: getPanelInfo
       summary: Get material panel information
-      description: Observed behavior from local research.
+      description: >-
+        Returns the category tree for a CapCut material panel. The `panel` value
+        is an internal identifier, not a display name: `effects2` is the editing
+        effects panel, `transitions` is transitions, `filter` is filters,
+        `face-prop` is body/face effects, `subtitle-templates` is caption
+        templates, and `default` is the general materials panel. Use the returned
+        category_id and category_key with getResourcesByCategoryId to list items
+        in a category such as Popular, Basic, Freeze Frame, or Pro.
       x-observed-host: heycan-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -1099,6 +1106,11 @@ components:
           examples: [0, 50, 100]
         panel:
           type: string
+          description: >-
+            Internal panel identifier. `effects2`=editing effects,
+            `transitions`=transitions, `filter`=filters, `face-prop`=body/face
+            effects, `subtitle-templates`=caption templates, `default`=general
+            materials. Resolve category display names through getPanelInfo.
           examples: [effects2, face-prop, default, transitions, subtitle-templates, filter]
         panel_source:
           type: string

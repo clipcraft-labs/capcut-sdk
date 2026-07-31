@@ -34,6 +34,13 @@ capcut api status
 
 ## Effects and materials
 
+CapCut uses internal panel identifiers. The most important one is `effects2`,
+which means the editing-effects panel (video effects such as Popular, Basic,
+and Freeze Frame). Other identifiers are `transitions` (transitions), `filter`
+(filters), `face-prop` (body/face effects), `subtitle-templates` (caption
+templates), and `default` (general materials). Panel metadata returns the
+human-readable category names and IDs.
+
 Search effects:
 
 ```bash
@@ -54,6 +61,10 @@ Inspect a material panel:
 capcut panels info [--panel NAME]
 capcut panels info --panel effects2
 ```
+
+Use the category IDs returned by this command with the SDK's
+`client.effects.list(category_id=..., category=..., panel="effects2")` method
+to retrieve a specific category.
 
 ## Music
 

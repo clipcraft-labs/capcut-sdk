@@ -35,17 +35,23 @@ def build_parser() -> argparse.ArgumentParser:
     call.add_argument("path")
     call.add_argument("body", type=argparse.FileType("r"), nargs="?")
     call.add_argument("--service", default=None)
-    effects = sub.add_parser("effects", help="Query effect resources")
+    effects = sub.add_parser("effects", help="Query editing-effect resources and categories")
     effects_sub = effects.add_subparsers(dest="effects_command", required=True)
     search = effects_sub.add_parser("search")
     search.add_argument("query")
     search.add_argument("--offset", type=int, default=0)
     search.add_argument("--count", type=int, default=50)
     words = effects_sub.add_parser("words")
-    panels = sub.add_parser("panels", help="Query material panels")
+    panels = sub.add_parser("panels", help="Query CapCut material panels (effects2=editing effects)")
     panels_sub = panels.add_subparsers(dest="panels_command", required=True)
-    info = panels_sub.add_parser("info")
-    info.add_argument("--panel", default="effects2")
+    info = panels_sub.add_parser("info", help="List categories for a panel")
+    info.add_argument(
+        "--panel",
+        default="effects2",
+        help=("Internal panel identifier. effects2=editing effects, transitions=transitions, "
+              "filter=filters, face-prop=body/face effects, subtitle-templates=caption templates, "
+              "default=general materials."),
+    )
     music = sub.add_parser("music", help="Query music collections and songs")
     music_sub = music.add_subparsers(dest="music_command", required=True)
     music_sub.add_parser("collections")
