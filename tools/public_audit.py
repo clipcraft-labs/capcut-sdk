@@ -7,7 +7,7 @@ import argparse
 import re
 from pathlib import Path
 
-PRIVATE_DIRS = {"captures", "harness/runtime", ".git", ".venv", "build", "dist"}
+PRIVATE_DIRS = {"captures", "harness/runtime", ".git", ".venv", "build", "dist", "generated"}
 TEXT_SUFFIXES = {".py", ".md", ".yaml", ".yml", ".toml", ".json", ".txt", ".cfg", ".ini"}
 PATTERNS = (
     re.compile(r"\b(?:Authorization|Cookie)\s*:\s*\S+"),
