@@ -6,6 +6,8 @@ the SDK never reads them from captures or commits them to the repository.
 
 from dataclasses import dataclass
 
+from .auth import CAPCUT_APP_ID
+
 
 @dataclass(frozen=True, slots=True)
 class DeviceProfile:
@@ -24,7 +26,7 @@ class SDKConfig:
     device: DeviceProfile
     region: str = "KR"
     language: str = "ko-KR"
-    app_id: int = 359289
+    app_id: int = CAPCUT_APP_ID
     app_name: str = "CapCut"
     version_name: str = "9.1.0"
     version_code: str = "9.1.0"

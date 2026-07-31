@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "capcut-api-sdk"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Unofficial, capture-backed CapCut API SDK and CLI"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,6 +27,9 @@ capcut = "capcut_sdk.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/capcut_sdk"]
+
+[tool.hatch.version]
+path = "src/capcut_sdk/__init__.py"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
