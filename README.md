@@ -77,6 +77,8 @@ The SDK currently exposes these operation groups:
 ```bash
 capcut effects search 'blur'
 capcut panels info --panel effects2
+capcut panels info --panel transitions --format catalog
+capcut effects list --panel transitions --category-id <id> --format catalog
 capcut music collections
 capcut music collections --effects
 capcut music songs <collection-id> --limit 10 --download-dir ./downloads
@@ -92,6 +94,12 @@ walk every page.
 `music songs --download-dir` downloads each returned `preview_url` locally and
 stores ISO-BMFF/AAC previews as `.m4a` when the server response identifies that
 format. Downloaded previews remain local and should not be committed.
+
+Use `--format catalog` when another SDK, draft compiler, MCP server, or Skill
+needs stable records instead of version-dependent raw API responses. Catalogue
+records normalize provider, resource kind, identifiers, display name, category,
+VIP/commercial flags, preview URL, and duration while leaving raw output as the
+backward-compatible default.
 
 ## Python
 

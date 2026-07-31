@@ -7,7 +7,8 @@ from .signing import CapCutSigner
 from .profiles import ProfileStore, config_from_environment
 from .cache import JsonCache
 from .search import RecordIndex
+from .catalog import CatalogCategory, CatalogResource
 
 __version__ = "0.1.0"
 
-__all__ = ["ApiError", "CapCutClient", "CapCutSigner", "ConfigurationError", "DeviceProfile", "JsonCache", "ProfileStore", "RecordIndex", "SDKConfig", "config_from_environment", "__version__"]
+__all__ = ["ApiError", "CapCutClient", "CapCutSigner", "CatalogCategory", "CatalogResource", "ConfigurationError", "DeviceProfile", "JsonCache", "ProfileStore", "RecordIndex", "SDKConfig", "config_from_environment", "__version__"]

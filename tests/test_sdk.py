@@ -3,7 +3,7 @@ import unittest
 
 import httpx
 
-from capcut_sdk import CapCutClient, CapCutSigner, DeviceProfile, SDKConfig
+from capcut_sdk import CapCutClient, CapCutSigner, CatalogResource, DeviceProfile, SDKConfig
 from capcut_sdk.models import Effect
 from capcut_sdk.transport import HttpTransport
 
@@ -18,6 +18,12 @@ class SDKTests(unittest.TestCase):
     def test_effect_model(self):
         effect = Effect.from_dict({"common_attr": {"id": "1", "title": "synthetic", "extra": '{"is_vip":true}'}})
         self.assertEqual((effect.id, effect.title, effect.is_vip), ("1", "synthetic", True))
+
+    def test_catalog_resource_normalizes_effect(self):
+        effect = Effect.from_dict({"common_attr": {"id": "1", "title": "synthetic", "extra": '{"is_vip":false}'}, "resource_id": "2", "effect_id": "3"})
+        resource = CatalogResource.from_effect(effect, panel="effects2", category_id="4", category_key="hot")
+        self.assertEqual((resource.id, resource.resource_id, resource.effect_id), ("1", "2", "3"))
+        self.assertEqual(resource.category.panel, "effects2")
 
     def test_effect_list_uses_next_offset(self):
         def handler(request: httpx.Request):

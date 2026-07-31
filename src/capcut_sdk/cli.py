@@ -8,6 +8,7 @@ from pathlib import Path
 import httpx
 
 from .client import CapCutClient
+from .catalog import CatalogResource, category_record
 from .errors import ConfigurationError
 from .operations import OPERATIONS
 from .profiles import ProfileStore, config_from_environment
@@ -44,6 +45,14 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("query")
     search.add_argument("--offset", type=int, default=0)
     search.add_argument("--count", type=int, default=50, help="Number of results (default: 50)")
+    search.add_argument("--format", choices=["raw", "catalog"], default="raw", help="Output raw API items or stable catalogue records")
+    effect_list = effects_sub.add_parser("list", help="List resources in a panel category")
+    effect_list.add_argument("--panel", default="effects2")
+    effect_list.add_argument("--category-id", required=True)
+    effect_list.add_argument("--category-key", default="hot")
+    effect_list.add_argument("--offset", type=int, default=0)
+    effect_list.add_argument("--count", type=int, default=50)
+    effect_list.add_argument("--format", choices=["raw", "catalog"], default="catalog")
     words = effects_sub.add_parser("words")
     panels = sub.add_parser("panels", help="Query CapCut material panels (effects2=editing effects)")
     panels_sub = panels.add_subparsers(dest="panels_command", required=True)
@@ -55,16 +64,19 @@ def build_parser() -> argparse.ArgumentParser:
               "filter=filters, face-prop=body/face effects, subtitle-templates=caption templates, "
               "default=general materials."),
     )
+    info.add_argument("--format", choices=["raw", "catalog"], default="raw")
     music = sub.add_parser("music", help="Query music collections and songs")
     music_sub = music.add_subparsers(dest="music_command", required=True)
     collections = music_sub.add_parser("collections", help="List music or sound-effect collections")
     collections.add_argument("--effects", action="store_true", help="List sound-effect music collections instead of songs/music")
     collections.add_argument("--only-commercial", action="store_true", help="Limit sound-effect collections to commercial-use items")
+    collections.add_argument("--format", choices=["raw", "catalog"], default="raw")
     songs = music_sub.add_parser("songs")
     songs.add_argument("collection_id")
     songs.add_argument("--offset", type=int, default=0)
     songs.add_argument("--limit", type=int, default=20, help="Maximum songs to return/download (default: 20)")
     songs.add_argument("--download-dir", type=Path, help="Download each song preview_url to this directory")
+    songs.add_argument("--format", choices=["raw", "catalog"], default="raw")
     templates = sub.add_parser("templates", help="Query template collections and items")
     templates_sub = templates.add_subparsers(dest="templates_command", required=True)
     templates_sub.add_parser("collections")
@@ -139,16 +151,23 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(client.configuration.remote_settings(), ensure_ascii=False))
         elif args.command == "effects" and args.effects_command == "search":
             page = client.effects.search(args.query, offset=args.offset, count=args.count)
-            print(json.dumps({"items": [item.raw for item in page.items], "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
+            items = [CatalogResource.from_effect(item).to_dict() for item in page.items] if args.format == "catalog" else [item.raw for item in page.items]
+            print(json.dumps({"items": items, "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
+        elif args.command == "effects" and args.effects_command == "list":
+            page = client.effects.list(category_id=args.category_id, category=args.category_key, panel=args.panel, offset=args.offset, count=args.count)
+            items = [CatalogResource.from_effect(item, panel=args.panel, category_id=args.category_id, category_key=args.category_key).to_dict() for item in page.items] if args.format == "catalog" else [item.raw for item in page.items]
+            print(json.dumps({"items": items, "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
         elif args.command == "effects":
             words = client.effects.search_words()
             print(json.dumps({"default_word": words.default_word, "recommend_words": words.recommend_words, "hot_words": words.hot_words}, ensure_ascii=False))
         elif args.command == "panels":
             panel = client.panels.info(panel=args.panel)
-            print(json.dumps({"categories": [category.raw for category in panel.categories]}, ensure_ascii=False))
+            categories = [category_record(category, panel=args.panel) for category in panel.categories] if args.format == "catalog" else [category.raw for category in panel.categories]
+            print(json.dumps({"categories": categories}, ensure_ascii=False))
         elif args.music_command == "collections":
             collections = client.music.collections(effects=args.effects, only_commercial=args.only_commercial)
-            print(json.dumps([collection.raw for collection in collections], ensure_ascii=False))
+            items = [CatalogResource.from_collection(collection, effects=args.effects).to_dict() for collection in collections] if args.format == "catalog" else [collection.raw for collection in collections]
+            print(json.dumps(items, ensure_ascii=False))
         elif args.command == "music":
             page = client.music.songs(args.collection_id, offset=args.offset, count=args.limit)
             if args.download_dir:
@@ -175,7 +194,8 @@ def main(argv: list[str] | None = None) -> int:
                         downloaded.append({"id": song.id, "title": song.title, "path": str(destination)})
                 print(json.dumps({"downloaded": downloaded, "count": len(downloaded)}, ensure_ascii=False, indent=2))
             else:
-                print(json.dumps({"items": [song.raw for song in page.items], "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
+                items = [CatalogResource.from_song(song).to_dict() for song in page.items] if args.format == "catalog" else [song.raw for song in page.items]
+                print(json.dumps({"items": items, "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
         elif args.templates_command == "collections":
             collections = client.templates.collections()
             print(json.dumps([collection.raw for collection in collections], ensure_ascii=False))

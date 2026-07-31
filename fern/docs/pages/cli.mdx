@@ -44,9 +44,9 @@ human-readable category names and IDs.
 Search effects:
 
 ```bash
-capcut effects search QUERY [--offset N] [--count N]
+capcut effects search QUERY [--offset N] [--count N] [--format raw|catalog]
 capcut effects search blur
-capcut effects search blur --offset 50 --count 50
+capcut effects search blur --offset 50 --count 50 --format catalog
 ```
 
 Get suggested search terms:
@@ -66,12 +66,26 @@ Use the category IDs returned by this command with the SDK's
 `client.effects.list(category_id=..., category=..., panel="effects2")` method
 to retrieve a specific category.
 
+The CLI equivalent is:
+
+```bash
+capcut effects list \
+  --panel transitions \
+  --category-id CATEGORY_ID \
+  --category-key hot \
+  --format catalog
+```
+
+`--format catalog` returns stable resource records intended for draft
+compilers, MCP servers, and Skills. `raw` preserves the complete observed API
+response for research and debugging.
+
 ## Music
 
 List regular music collections:
 
 ```bash
-capcut music collections
+capcut music collections [--format raw|catalog]
 ```
 
 List sound-effect music collections. This uses CapCut's separate
@@ -89,7 +103,7 @@ response is received; this is a network/host issue, not an empty collection.
 List songs in a collection:
 
 ```bash
-capcut music songs COLLECTION_ID [--offset N] [--limit N]
+capcut music songs COLLECTION_ID [--offset N] [--limit N] [--format raw|catalog]
 capcut music songs 123456 --offset 0 --limit 20
 ```
 
