@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: CapCut Desktop Unofficial API
+  title: CapCut Desktop API Reference
   version: 0.1.0
-  summary: Reverse-engineered API surface observed from CapCut Desktop traffic
+  summary: CapCut Desktop API operations
   description: |
     This is an unofficial API specification observed from CapCut Desktop traffic.
     It is based on Singapore-region observations collected on 2026-07-31.
@@ -60,7 +60,7 @@ paths:
     post:
       tags: [Materials]
       operationId: getResourcesByCategoryId
-      summary: Observed API operation
+      summary: List effects by category
       description: |
         Observed behavior from local research.
         Observed behavior from local research.
@@ -94,7 +94,7 @@ paths:
     post:
       tags: [Materials]
       operationId: getPanelInfo
-      summary: Observed API operation
+      summary: Get material panel information
       description: Observed behavior from local research.
       x-observed-host: heycan-api-sg.capcutapi.com
       parameters:
@@ -125,7 +125,7 @@ paths:
     post:
       tags: [Search]
       operationId: searchEffects
-      summary: Observed API operation
+      summary: Search effects and materials
       description: |
         This specification models observed fields and allows additional properties in dynamic areas.
         This specification models observed fields and allows additional properties in dynamic areas.
@@ -158,7 +158,7 @@ paths:
     post:
       tags: [Search]
       operationId: getEffectSearchWords
-      summary: Observed API operation
+      summary: Get suggested effect search terms
       x-observed-host: heycan-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -186,7 +186,7 @@ paths:
     post:
       tags: [Materials]
       operationId: multiGetArtistItems
-      summary: Observed API operation
+      summary: Get multiple artist items
       x-observed-host: heycan-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -213,7 +213,7 @@ paths:
     post:
       tags: [Materials]
       operationId: multiGetItems
-      summary: Observed API operation
+      summary: Get multiple material items
       x-observed-host: heycan-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -248,7 +248,7 @@ paths:
     post:
       tags: [Materials, Configuration]
       operationId: getEffectGeneralConfig
-      summary: Observed API operation
+      summary: Get effect general configuration
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Language'
@@ -295,7 +295,7 @@ paths:
     get:
       tags: [Materials]
       operationId: listEffectsByResourceId
-      summary: Observed API operation
+      summary: List effects by resource ID
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
         - name: panel
@@ -345,7 +345,7 @@ paths:
     post:
       tags: [AIGC]
       operationId: getUserAigcList
-      summary: Observed API operation
+      summary: List user-generated AIGC effects
       x-observed-host: heycan-api-sg.capcutapi.com
       x-authentication-required: true
       parameters:
@@ -384,7 +384,7 @@ paths:
     post:
       tags: [AIGC]
       operationId: getRandomAigcPrompts
-      summary: Observed API operation
+      summary: Get random AIGC prompts
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -433,7 +433,7 @@ paths:
     post:
       tags: [Music]
       operationId: getMusicCollections
-      summary: Observed API operation
+      summary: List music collections
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -465,7 +465,7 @@ paths:
     post:
       tags: [Music]
       operationId: getMusicEffectCollections
-      summary: Observed API operation
+      summary: List music effect collections
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -497,7 +497,7 @@ paths:
     post:
       tags: [Music]
       operationId: getCollectionSongs
-      summary: Observed API operation
+      summary: List songs in a collection
       description: "`has_more=true`observed `next_offset`observed observed observed observed."
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
@@ -525,7 +525,7 @@ paths:
     post:
       tags: [Templates]
       operationId: getTemplateCollections
-      summary: Observed API operation
+      summary: List template collections
       x-observed-host: feed-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -560,7 +560,7 @@ paths:
     post:
       tags: [Templates]
       operationId: getCollectionTemplates
-      summary: Observed API operation
+      summary: List templates in a collection
       description: "`has_more=true`observed `new_cursor`observed observed observed `cursor`observed observed."
       x-observed-host: feed-api-sg.capcutapi.com
       parameters:
@@ -589,7 +589,7 @@ paths:
     post:
       tags: [Templates]
       operationId: multiGetTemplates
-      summary: Observed API operation
+      summary: Get multiple templates
       x-observed-host: feed-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -635,7 +635,7 @@ paths:
     get:
       tags: [Configuration]
       operationId: getModelArithmetics
-      summary: Observed API operation
+      summary: Get model arithmetic metadata
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
         - name: required_model_list
@@ -673,7 +673,7 @@ paths:
     get:
       tags: [Configuration]
       operationId: getRemoteSettings
-      summary: Observed API operation
+      summary: Get remote application settings
       x-observed-host: editor-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/Aid'
@@ -721,7 +721,7 @@ paths:
     get:
       tags: [Configuration]
       operationId: getMonitorSettings
-      summary: PC observed observed observed
+      summary: Get desktop monitor settings
       x-observed-host: pc-mon-v2-boot.capcutapi.com
       security: []
       parameters:
@@ -768,7 +768,7 @@ paths:
     post:
       tags: [Configuration]
       operationId: batchGetUserBenefit
-      summary: Observed API operation
+      summary: Get user benefit status
       description: Observed behavior from local research.
       x-observed-host: commerce-api-sg.capcutapi.com
       parameters:
@@ -807,7 +807,7 @@ paths:
     post:
       tags: [Configuration]
       operationId: fetchCompliancePopups
-      summary: Observed API operation
+      summary: Get compliance popups
       x-observed-host: feed-api-sg.capcutapi.com
       parameters:
         - $ref: '#/components/parameters/DeviceId'
@@ -869,7 +869,7 @@ paths:
     post:
       tags: [Telemetry]
       operationId: ingestEventBatches
-      summary: Observed API operation
+      summary: Submit batched client events
       x-observed-host: mcs-normal-sg.capcutapi.com
       requestBody:
         required: true
@@ -893,7 +893,7 @@ paths:
     post:
       tags: [Telemetry]
       operationId: ingestEvents
-      summary: Observed API operation
+      summary: Submit client events
       x-observed-host: mcs-normal-sg.capcutapi.com
       requestBody:
         required: true
