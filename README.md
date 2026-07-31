@@ -31,27 +31,27 @@ capcut auth profile show
 capcut auth profile set default --region KR --language ko-KR
 ```
 
-Live requests require an explicit mode switch. Environment variables override
-the profile for one process:
+After real identifiers are available, store them in the default profile and
+enable live mode. Subsequent API commands use that profile automatically:
 
 ```bash
-CAPCUT_MODE=live \
-CAPCUT_DEVICE_ID='your-device-id' \
-CAPCUT_IID='your-install-id' \
+capcut auth profile set default \
+  --device-id 'your-device-id' \
+  --iid 'your-install-id' \
+  --mode live
 capcut effects search 'blur'
 ```
 
-The default mode is `offline`; it never sends synthetic identifiers to a
-remote service.
+The default profile is created in `offline` mode with synthetic identifiers.
+It can be used for local inspection, but it never sends those identifiers to
+a remote service. Environment variables remain available only as one-process
+overrides for automation.
 
-See [`docs/profiles.md`](./docs/profiles.md) for profile storage, environment
-overrides, and live-mode rules.
-
-Live commands use caller-provided identifiers and the built-in CapCut signer:
+See [`docs/profiles.md`](./docs/profiles.md) for profile storage, overrides,
+and live-mode rules. Live commands use the caller-configured profile and the
+built-in CapCut signer:
 
 ```bash
-export CAPCUT_DEVICE_ID='your-device-id'
-export CAPCUT_IID='your-install-id'
 capcut effects search 'blur'
 capcut panels info --panel effects2
 capcut music collections

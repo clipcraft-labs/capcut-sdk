@@ -17,14 +17,19 @@ capcut auth profile show
 capcut auth profile set default --region KR --language ko-KR
 ```
 
-Environment variables override a profile for one process:
+After receiving real identifiers, configure the default profile once:
 
 ```bash
-CAPCUT_MODE=live \
-CAPCUT_DEVICE_ID='your-device-id' \
-CAPCUT_IID='your-install-id' \
+capcut auth profile set default \
+  --device-id 'your-device-id' \
+  --iid 'your-install-id' \
+  --mode live
 capcut effects search 'blur'
 ```
+
+The CLI uses the default profile automatically; no `export` commands are
+required. Environment variables remain an optional one-process override for
+automation and are not part of the normal setup.
 
 The profile directory is created with mode `0700` and profile files with mode
 `0600`. Identifiers are masked by `profile show`. The SDK never discovers or
