@@ -1,0 +1,15 @@
+# Profiles
+
+Profiles are stored in
+`~/.config/clipcraft-labs/capcut/profiles/default.toml` and are created on first
+use. Configure a real profile when an endpoint requires account or device
+authentication:
+
+```bash
+capcut auth profile set default \
+  --device-id "your-device-id" \
+  --iid "your-install-id" \
+  --region KR \
+  --language ko-KR \
+  --mode live
+```

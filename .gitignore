@@ -6,6 +6,8 @@ __pycache__/
 .ruff_cache/
 dist/
 build/
+generated/
+ai_examples_override.yml
 *.egg-info/
 .env
 .env.*

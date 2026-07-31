@@ -1,0 +1,27 @@
+instances:
+  - url: clipcraft-labs.docs.buildwithfern.com
+
+title: CapCut API SDK
+
+tabs:
+  home:
+    display-name: Guides
+    icon: home
+  API Reference:
+    display-name: API Reference
+    icon: puzzle
+
+navigation:
+  - tab: home
+    layout:
+      - section: Get started
+        contents:
+          - page: Welcome
+            path: docs/pages/getting-started.mdx
+          - page: Profiles
+            path: docs/pages/profiles.mdx
+          - page: CLI
+            path: docs/pages/cli.mdx
+  - tab: API Reference
+    layout:
+      - api: CapCut Desktop Unofficial API

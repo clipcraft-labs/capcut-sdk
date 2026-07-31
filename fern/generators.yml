@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://schema.buildwithfern.dev/generators-yml.json
+api:
+  specs:
+    - openapi: ../openapi.yaml
+      settings:
+        title-as-schema-name: false
+        inline-path-parameters: false
+        respect-forward-compatible-enums: true
+
+metadata:
+  description: Unofficial CapCut Desktop API reference and SDK definitions
+  authors:
+    - name: Clipcraft Labs
+      email: opensource@clipcraft-labs.dev
+
+groups:
+  python-sdk:
+    generators:
+      - name: fern-python-sdk
+        version: 5.24.0
+        output:
+          location: local-file-system
+          path: ../generated/python

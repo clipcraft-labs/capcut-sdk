@@ -1006,6 +1006,12 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
 
   schemas:
+    FlexibleIntegerString:
+      description: A server value observed as either an integer or a string.
+      oneOf:
+        - type: integer
+        - type: string
+
     BaseEnvelope:
       type: object
       properties:
@@ -1021,13 +1027,9 @@ components:
         sign:
           type: string
         svr_time:
-          oneOf:
-            - type: integer
-            - type: string
+          $ref: '#/components/schemas/FlexibleIntegerString'
         systime:
-          oneOf:
-            - type: integer
-            - type: string
+          $ref: '#/components/schemas/FlexibleIntegerString'
         data:
           type: object
           additionalProperties: true
@@ -1043,9 +1045,7 @@ components:
         log_id:
           type: string
         svr_time:
-          oneOf:
-            - type: integer
-            - type: string
+          $ref: '#/components/schemas/FlexibleIntegerString'
         svr_timing:
           type: object
           additionalProperties: true
