@@ -1,0 +1,61 @@
+# Clipcraft project workflow
+
+The API SDK is the live catalogue provider in a larger, vendor-neutral video
+build pipeline:
+
+```text
+CapCut API catalogue
+  -> stable CatalogResource records
+  -> clipcraft.lock
+  -> SHA-256 local asset store
+  -> Clipcraft Project compiler
+  -> validated CapCut Desktop draft
+```
+
+Use the unified CLI when the end goal is a reproducible video project:
+
+```bash
+python -m pip install \
+  "capcut-api-sdk @ git+https://github.com/clipcraft-labs/capcut-sdk.git" \
+  "clipcraft-capcut-draft @ git+https://github.com/clipcraft-labs/capcut-draft.git" \
+  "clipcraft-cli @ git+https://github.com/clipcraft-labs/clipcraft-cli.git"
+
+clipcraft catalog effects search blur
+clipcraft resolve effect blur --as hero-blur
+clipcraft project build project.json \
+  --lock clipcraft.lock \
+  --out build/demo
+clipcraft project validate build/demo
+```
+
+Music resolution downloads a preview to a content-addressed local store and
+records only its SHA-256 hash and size in the lock file:
+
+```bash
+clipcraft resolve music COLLECTION_ID \
+  --pick 1 \
+  --as background-music
+```
+
+Generated drafts are build artifacts. The portable `project.json` and reviewed
+`clipcraft.lock` remain the source of truth. Do not commit downloaded media,
+signed URLs, raw API responses, device identifiers, cookies, or Desktop index
+files.
+
+Desktop registration is intentionally plan-first:
+
+```bash
+clipcraft project register build/demo --drafts-dir /path/to/Desktop/drafts
+clipcraft project register build/demo --drafts-dir /path/to/Desktop/drafts --apply
+```
+
+The apply form writes only inside the selected drafts directory and preserves
+existing metadata with `.bak` files.
+
+Related repositories:
+
+- [CapCut SDK](https://github.com/clipcraft-labs/capcut-sdk)
+- [CapCut Draft compiler](https://github.com/clipcraft-labs/capcut-draft)
+- [Clipcraft CLI](https://github.com/clipcraft-labs/clipcraft-cli)
+- [CapCut Research](https://github.com/clipcraft-labs/capcut-research)
+

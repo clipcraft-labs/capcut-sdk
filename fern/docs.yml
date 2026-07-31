@@ -22,6 +22,8 @@ navigation:
             path: docs/pages/profiles.mdx
           - page: CLI
             path: docs/pages/cli.mdx
+          - page: Clipcraft workflow
+            path: docs/pages/clipcraft-workflow.mdx
   - tab: API Reference
     layout:
       - api: CapCut Desktop Unofficial API

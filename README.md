@@ -18,6 +18,8 @@ python -m pip install -e .
 
 - [API Reference](https://clipcraft-labs.docs.buildwithfern.com)
 - [Source repository](https://github.com/clipcraft-labs/capcut-sdk)
+- [Draft compiler](https://github.com/clipcraft-labs/capcut-draft)
+- [Unified Clipcraft CLI](https://github.com/clipcraft-labs/clipcraft-cli)
 
 ## Quick start
 
