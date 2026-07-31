@@ -1,0 +1,32 @@
+name: Publish Fern Docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "openapi.yaml"
+      - "fern/**"
+      - ".github/workflows/publish-docs.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Fern CLI
+        uses: fern-api/setup-fern-cli@v1
+
+      - name: Validate Fern configuration
+        run: fern check
+
+      - name: Publish production documentation
+        env:
+          FERN_TOKEN: ${{ secrets.FERN_TOKEN }}
+        run: fern generate --docs --instance clipcraft-labs.docs.buildwithfern.com
