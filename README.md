@@ -25,6 +25,21 @@ capcut effects search 'blur'
 The default profile is created with generated local identifiers and `live`
 mode, so supported catalog endpoints can be queried immediately.
 
+## Profiles
+
+Profiles are stored locally at:
+
+```text
+~/.config/clipcraft-labs/capcut/profiles/default.toml
+```
+
+Inspect the active profile:
+
+```bash
+capcut auth profile list
+capcut auth profile show
+```
+
 To replace the generated identifiers later:
 
 ```bash
@@ -34,12 +49,6 @@ capcut auth profile set default \
   --region KR \
   --language ko-KR \
   --mode live
-```
-
-Profiles are stored locally at:
-
-```text
-~/.config/clipcraft-labs/capcut/profiles/default.toml
 ```
 
 Generated identifiers work for catalog endpoints; login-required endpoints may
