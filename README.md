@@ -84,8 +84,7 @@ client = CapCutClient(config, signer=CapCutSigner())
 page = client.effects.search("blur")
 ```
 
-The built-in `CapCutSigner` is included in the SDK. No research repository or
-extra signing package is required.
+The built-in `CapCutSigner` is included in the SDK.
 
 This is an unofficial, observation-based API. Availability and response
 schemas can change. Review applicable terms of service and laws before use.
