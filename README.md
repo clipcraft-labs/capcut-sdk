@@ -14,6 +14,11 @@ For local development:
 python -m pip install -e .
 ```
 
+## Documentation
+
+- [API Reference](https://clipcraft-labs.docs.buildwithfern.com)
+- [Source repository](https://github.com/clipcraft-labs/capcut-sdk)
+
 ## Quick start
 
 The first command creates a local `default` profile automatically:
