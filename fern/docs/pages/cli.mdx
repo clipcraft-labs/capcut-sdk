@@ -68,11 +68,23 @@ to retrieve a specific category.
 
 ## Music
 
-List music collections:
+List regular music collections:
 
 ```bash
 capcut music collections
 ```
+
+List sound-effect music collections. This uses CapCut's separate
+`get_music_effect_collections` operation rather than the regular music catalog:
+
+```bash
+capcut music collections --effects
+capcut music collections --effects --only-commercial
+```
+
+The API host and availability can differ from effects and panel APIs. If the
+configured CapCut catalog host cannot be resolved, both commands fail before a
+response is received; this is a network/host issue, not an empty collection.
 
 List songs in a collection:
 

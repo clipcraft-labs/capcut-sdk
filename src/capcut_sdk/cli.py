@@ -54,7 +54,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     music = sub.add_parser("music", help="Query music collections and songs")
     music_sub = music.add_subparsers(dest="music_command", required=True)
-    music_sub.add_parser("collections")
+    collections = music_sub.add_parser("collections", help="List music or sound-effect collections")
+    collections.add_argument("--effects", action="store_true", help="List sound-effect music collections instead of songs/music")
+    collections.add_argument("--only-commercial", action="store_true", help="Limit sound-effect collections to commercial-use items")
     songs = music_sub.add_parser("songs")
     songs.add_argument("collection_id")
     songs.add_argument("--offset", type=int, default=0)
@@ -140,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
             panel = client.panels.info(panel=args.panel)
             print(json.dumps({"categories": [category.raw for category in panel.categories]}, ensure_ascii=False))
         elif args.music_command == "collections":
-            collections = client.music.collections()
+            collections = client.music.collections(effects=args.effects, only_commercial=args.only_commercial)
             print(json.dumps([collection.raw for collection in collections], ensure_ascii=False))
         elif args.command == "music":
             page = client.music.songs(args.collection_id, offset=args.offset)

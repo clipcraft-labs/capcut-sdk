@@ -78,6 +78,7 @@ The SDK currently exposes these operation groups:
 capcut effects search 'blur'
 capcut panels info --panel effects2
 capcut music collections
+capcut music collections --effects
 capcut music songs <collection-id>
 capcut templates collections
 capcut templates list <collection-id> --cursor 0
