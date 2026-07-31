@@ -16,18 +16,16 @@ python -m pip install -e .
 
 ## Quick start
 
-The first profile command creates a local `default` profile automatically:
+The first command creates a local `default` profile automatically:
 
 ```bash
-capcut auth profile list
-capcut auth profile show
-capcut api status
+capcut effects search 'blur'
 ```
 
 The default profile is created with generated local identifiers and `live`
 mode, so supported catalog endpoints can be queried immediately.
 
-To replace the generated identifiers with a real profile:
+To replace the generated identifiers later:
 
 ```bash
 capcut auth profile set default \
@@ -44,9 +42,8 @@ Profiles are stored locally at:
 ~/.config/clipcraft-labs/capcut/profiles/default.toml
 ```
 
-No environment variables are required for normal use. Generated identifiers
-work for some catalog endpoints; login-required endpoints may still return an
-authentication error.
+Generated identifiers work for catalog endpoints; login-required endpoints may
+still return an authentication error.
 
 ## Supported API operations
 
@@ -82,7 +79,7 @@ walk every page.
 ```python
 from capcut_sdk import CapCutClient, CapCutSigner, ProfileStore
 
-config = ProfileStore().sdk_config("default", live=True)
+config = ProfileStore().sdk_config("default")
 client = CapCutClient(config, signer=CapCutSigner())
 page = client.effects.search("blur")
 ```
@@ -90,9 +87,5 @@ page = client.effects.search("blur")
 The built-in `CapCutSigner` is included in the SDK. No research repository or
 extra signing package is required.
 
-## Scope
-
 This is an unofficial, observation-based API. Availability and response
-schemas can change. Review applicable terms of service and laws before making
-live requests. Research notes and native runtime experiments are maintained
-separately in [`capcut-research`](https://github.com/clipcraft-labs/capcut-research).
+schemas can change. Review applicable terms of service and laws before use.
