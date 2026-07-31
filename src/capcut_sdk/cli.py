@@ -3,6 +3,9 @@
 import argparse
 import json
 import sys
+from pathlib import Path
+
+import httpx
 
 from .client import CapCutClient
 from .errors import ConfigurationError
@@ -60,6 +63,8 @@ def build_parser() -> argparse.ArgumentParser:
     songs = music_sub.add_parser("songs")
     songs.add_argument("collection_id")
     songs.add_argument("--offset", type=int, default=0)
+    songs.add_argument("--limit", type=int, default=20, help="Maximum songs to return/download (default: 20)")
+    songs.add_argument("--download-dir", type=Path, help="Download each song preview_url to this directory")
     templates = sub.add_parser("templates", help="Query template collections and items")
     templates_sub = templates.add_subparsers(dest="templates_command", required=True)
     templates_sub.add_parser("collections")
@@ -145,8 +150,27 @@ def main(argv: list[str] | None = None) -> int:
             collections = client.music.collections(effects=args.effects, only_commercial=args.only_commercial)
             print(json.dumps([collection.raw for collection in collections], ensure_ascii=False))
         elif args.command == "music":
-            page = client.music.songs(args.collection_id, offset=args.offset)
-            print(json.dumps({"items": [song.raw for song in page.items], "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
+            page = client.music.songs(args.collection_id, offset=args.offset, count=args.limit)
+            if args.download_dir:
+                args.download_dir.mkdir(parents=True, exist_ok=True)
+                downloaded = []
+                with httpx.Client(timeout=config.timeout, follow_redirects=True) as downloader:
+                    for index, song in enumerate(page.items[:args.limit], start=1):
+                        url = (song.raw or {}).get("preview_url")
+                        if not url:
+                            continue
+                        response = downloader.get(url)
+                        response.raise_for_status()
+                        suffix = Path(url.split("?", 1)[0]).suffix
+                        if not suffix:
+                            content_type = response.headers.get("content-type", "").split(";", 1)[0]
+                            suffix = {"audio/mpeg": ".mp3", "audio/mp4": ".m4a", "audio/wav": ".wav", "audio/x-wav": ".wav"}.get(content_type, ".bin")
+                        destination = args.download_dir / f"{index:02d}-{song.id}{suffix}"
+                        destination.write_bytes(response.content)
+                        downloaded.append({"id": song.id, "title": song.title, "path": str(destination)})
+                print(json.dumps({"downloaded": downloaded, "count": len(downloaded)}, ensure_ascii=False, indent=2))
+            else:
+                print(json.dumps({"items": [song.raw for song in page.items], "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
         elif args.templates_command == "collections":
             collections = client.templates.collections()
             print(json.dumps([collection.raw for collection in collections], ensure_ascii=False))

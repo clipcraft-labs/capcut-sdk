@@ -89,9 +89,21 @@ response is received; this is a network/host issue, not an empty collection.
 List songs in a collection:
 
 ```bash
-capcut music songs COLLECTION_ID [--offset N]
-capcut music songs 123456 --offset 0
+capcut music songs COLLECTION_ID [--offset N] [--limit N]
+capcut music songs 123456 --offset 0 --limit 20
 ```
+
+Download the returned song preview files using the CLI only:
+
+```bash
+capcut music songs 7405443137890568977 \
+  --limit 10 \
+  --download-dir ./downloads/hot-bgm
+```
+
+The command uses each song's `preview_url`, writes files locally, and prints a
+JSON manifest with the title, ID, and path. It does not expose or store the
+signed API request; downloaded files remain local and are not committed.
 
 ## Templates
 

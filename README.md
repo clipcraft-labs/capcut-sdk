@@ -79,7 +79,7 @@ capcut effects search 'blur'
 capcut panels info --panel effects2
 capcut music collections
 capcut music collections --effects
-capcut music songs <collection-id>
+capcut music songs <collection-id> --limit 10 --download-dir ./downloads
 capcut templates collections
 capcut templates list <collection-id> --cursor 0
 capcut call /artist/v1/effect/search request.json
