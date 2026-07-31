@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.mitm binary linguist-generated=true
+*.py text diff=python
+*.yaml text diff
+*.yml text diff
+*.json text diff
+

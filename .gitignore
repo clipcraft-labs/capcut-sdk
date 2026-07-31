@@ -1,0 +1,21 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Captures can contain device identifiers, cookies, and request metadata.
+# Keep them local unless explicitly sanitised.
+captures/*.mitm
+harness/runtime/*.json
+
+# Public fixtures must be explicitly reviewed and placed under fixtures/.
+fixtures/*.json

@@ -1,0 +1,1790 @@
+openapi: 3.1.0
+info:
+  title: CapCut Desktop Unofficial API
+  version: 0.1.0
+  summary: Reverse-engineered API surface observed from CapCut Desktop traffic
+  description: |
+    This is an unofficial API specification observed from CapCut Desktop traffic.
+    It is based on Singapore-region observations collected on 2026-07-31.
+
+    This specification models observed fields and allows additional properties in dynamic areas.
+    This specification models observed fields and allows additional properties in dynamic areas.
+  contact:
+    name: Local reverse-engineering workspace
+  license:
+    name: Documentation only
+    identifier: LicenseRef-Documentation-Only
+externalDocs:
+  description: Repository usage and capture notes
+  url: ./README.md
+servers:
+  - url: https://{service}.capcutapi.com
+    description: CapCut regional API services observed in the capture
+    variables:
+      service:
+        default: heycan-api-sg
+        enum:
+          - heycan-api-sg
+          - editor-api-sg
+          - feed-api-sg
+          - commerce-api-sg
+          - mcs-normal-sg
+          - pc-mon-v2-boot
+tags:
+  - name: Materials
+    description: Effects, stickers, filters, transitions, captions, and panel metadata
+  - name: Search
+    description: Material search and suggested terms
+  - name: Music
+    description: Music collections and songs
+  - name: Templates
+    description: Replicate template collections and template items
+  - name: AIGC
+    description: AI-generated material helpers
+  - name: Configuration
+    description: Remote configuration, models, benefits, and compliance
+  - name: Telemetry
+    description: Client event ingestion
+x-capture-evidence:
+  observedAt: '2026-07-31'
+  region: SG
+  evidenceRepository: https://github.com/clipcraft-labs/capcut-research
+  observedCapcutApiOperations: 23
+  excludedTraffic:
+    - image CDN
+    - video CDN
+    - model binary downloads
+
+paths:
+  /artist/v1/effect/get_resources_by_category_id:
+    post:
+      tags: [Materials]
+      operationId: getResourcesByCategoryId
+      summary: Observed API operation
+      description: |
+        Observed behavior from local research.
+        Observed behavior from local research.
+      x-observed-host: heycan-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/AppName'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/DevicePlatform'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+        - $ref: '#/components/parameters/VersionCode'
+        - $ref: '#/components/parameters/VersionName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryResourcesRequest'
+      responses:
+        '200':
+          description: Paginated material resources
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EffectListResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/panel/get_panel_info:
+    post:
+      tags: [Materials]
+      operationId: getPanelInfo
+      summary: Observed API operation
+      description: Observed behavior from local research.
+      x-observed-host: heycan-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/AppName'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/DevicePlatform'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+        - $ref: '#/components/parameters/VersionCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PanelInfoRequest'
+      responses:
+        '200':
+          description: Panel categories and optional initial category resources
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PanelInfoResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/effect/search:
+    post:
+      tags: [Search]
+      operationId: searchEffects
+      summary: Observed API operation
+      description: |
+        This specification models observed fields and allows additional properties in dynamic areas.
+        This specification models observed fields and allows additional properties in dynamic areas.
+      x-observed-host: heycan-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/AppName'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/DevicePlatform'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+        - $ref: '#/components/parameters/VersionCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EffectSearchRequest'
+      responses:
+        '200':
+          description: Paginated search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EffectSearchResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/effect/get_search_words:
+    post:
+      tags: [Search]
+      operationId: getEffectSearchWords
+      summary: Observed API operation
+      x-observed-host: heycan-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/AppName'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchWordsRequest'
+      responses:
+        '200':
+          description: Default, recommended, hot, and grey search words
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchWordsResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/effect/mget_artist_item:
+    post:
+      tags: [Materials]
+      operationId: multiGetArtistItems
+      summary: Observed API operation
+      x-observed-host: heycan-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiGetArtistItemRequest'
+      responses:
+        '200':
+          description: Material items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EffectItemsResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/effect/mget_item:
+    post:
+      tags: [Materials]
+      operationId: multiGetItems
+      summary: Observed API operation
+      x-observed-host: heycan-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+              additionalProperties: true
+      responses:
+        '200':
+          description: Material items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EffectItemsResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/effect/general_config:
+    post:
+      tags: [Materials, Configuration]
+      operationId: getEffectGeneralConfig
+      summary: Observed API operation
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Language'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scene]
+              properties:
+                scene:
+                  type: string
+              additionalProperties: true
+      responses:
+        '200':
+          description: General effect configuration
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          content:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                category_name:
+                                  type: string
+                                sub_contents:
+                                  type: array
+                                  items: {}
+                              additionalProperties: true
+                        additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /effect/api/v3/effect/listByResourceId:
+    get:
+      tags: [Materials]
+      operationId: listEffectsByResourceId
+      summary: Observed API operation
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - name: panel
+          in: query
+          schema:
+            type: string
+        - name: resource_ids
+          in: query
+          required: true
+          description: Observed behavior from local research.
+          schema:
+            type: string
+        - $ref: '#/components/parameters/AccessKey'
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Region'
+      responses:
+        '200':
+          description: Effects keyed or grouped by resource ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  collection: {}
+                  extra:
+                    type: object
+                    additionalProperties: true
+                  url_prefix:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/aigc_effect/user_aigc_list:
+    post:
+      tags: [AIGC]
+      operationId: getUserAigcList
+      summary: Observed API operation
+      x-observed-host: heycan-api-sg.capcutapi.com
+      x-authentication-required: true
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [count, effect_type, offset]
+              properties:
+                count:
+                  type: integer
+                  minimum: 1
+                effect_type:
+                  type: integer
+                offset:
+                  type: integer
+                  minimum: 0
+              additionalProperties: true
+      responses:
+        '200':
+          description: Observed behavior from local research.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseEnvelope'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /artist/v1/aigc_effect/random_prompt:
+    post:
+      tags: [AIGC]
+      operationId: getRandomAigcPrompts
+      summary: Observed API operation
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [model_list, scene]
+              properties:
+                model_list:
+                  type: array
+                  items:
+                    type: string
+                scene:
+                  type: string
+              additionalProperties: true
+      responses:
+        '200':
+          description: Prompts grouped by model
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          model2prompt_list:
+                            type: object
+                            additionalProperties:
+                              type: array
+                              items:
+                                type: string
+                        additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /lv/v1/get_collections:
+    post:
+      tags: [Music]
+      operationId: getMusicCollections
+      summary: Observed API operation
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [collection_type]
+              properties:
+                collection_type:
+                  type: integer
+              additionalProperties: true
+      responses:
+        '200':
+          description: Music collections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusicCollectionsResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /lv/v1/get_music_effect_collections:
+    post:
+      tags: [Music]
+      operationId: getMusicEffectCollections
+      summary: Observed API operation
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [only_commercial]
+              properties:
+                only_commercial:
+                  type: boolean
+              additionalProperties: true
+      responses:
+        '200':
+          description: Music-effect collections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusicCollectionsResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /lv/v1/get_collection_songs:
+    post:
+      tags: [Music]
+      operationId: getCollectionSongs
+      summary: Observed API operation
+      description: "`has_more=true`observed `next_offset`observed observed observed observed."
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionSongsRequest'
+      responses:
+        '200':
+          description: Paginated songs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionSongsResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /lv/v1/pc/replicate/get_collections:
+    post:
+      tags: [Templates]
+      operationId: getTemplateCollections
+      summary: Observed API operation
+      x-observed-host: feed-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/AppName'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/DevicePlatform'
+        - $ref: '#/components/parameters/VersionCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [collection_type, sdk_version]
+              properties:
+                collection_type:
+                  type: integer
+                sdk_version:
+                  type: string
+              additionalProperties: true
+      responses:
+        '200':
+          description: Template collections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateCollectionsResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /lv/v1/pc/replicate/get_collection_templates:
+    post:
+      tags: [Templates]
+      operationId: getCollectionTemplates
+      summary: Observed API operation
+      description: "`has_more=true`observed `new_cursor`observed observed observed `cursor`observed observed."
+      x-observed-host: feed-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/AppName'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/DevicePlatform'
+        - $ref: '#/components/parameters/VersionCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionTemplatesRequest'
+      responses:
+        '200':
+          description: Cursor-paginated templates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionTemplatesResponse'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /lv/v1/pc/replicate/multi_get_templates:
+    post:
+      tags: [Templates]
+      operationId: multiGetTemplates
+      summary: Observed API operation
+      x-observed-host: feed-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/VersionCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, sdk_version]
+              properties:
+                id:
+                  oneOf:
+                    - type: string
+                    - type: integer
+                sdk_version:
+                  type: string
+              additionalProperties: true
+      responses:
+        '200':
+          description: Templates
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/FeedEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          templates:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/TemplateItem'
+                        additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /model/api/arithmetics:
+    get:
+      tags: [Configuration]
+      operationId: getModelArithmetics
+      summary: Observed API operation
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - name: required_model_list
+          in: query
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/AccessKey'
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Region'
+        - $ref: '#/components/parameters/VersionCode'
+      responses:
+        '200':
+          description: Model arithmetic metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                  data:
+                    type: object
+                    properties:
+                      arithmetics:
+                        type: object
+                        additionalProperties: true
+                    additionalProperties: true
+                additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /service/settings/v3/:
+    get:
+      tags: [Configuration]
+      operationId: getRemoteSettings
+      summary: Observed API operation
+      x-observed-host: editor-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/DevicePlatform'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+        - $ref: '#/components/parameters/VersionCode'
+        - name: channel
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dynamic remote settings and experiment assignments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      settings:
+                        type: object
+                        additionalProperties: true
+                      vid_info:
+                        type: object
+                        additionalProperties: true
+                      settings_time: {}
+                      ctx_infos:
+                        type: object
+                        additionalProperties: true
+                      downstream_status:
+                        type: object
+                        additionalProperties: true
+                    additionalProperties: true
+                additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /monitor_pc/settings/api/settings_v2:
+    get:
+      tags: [Configuration]
+      operationId: getMonitorSettings
+      summary: PC observed observed observed
+      x-observed-host: pc-mon-v2-boot.capcutapi.com
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/DeviceId'
+        - name: app_version
+          in: query
+          schema:
+            type: string
+        - name: channel
+          in: query
+          schema:
+            type: string
+        - name: os
+          in: query
+          schema:
+            type: string
+        - name: os_version
+          in: query
+          schema:
+            type: string
+        - name: parfait_version
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Monitoring configuration status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ret:
+                    type: integer
+                  errmsg:
+                    type: string
+                  status: {}
+                additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /commerce/v1/benefits/batch_get_user_benefit:
+    post:
+      tags: [Configuration]
+      operationId: batchGetUserBenefit
+      summary: Observed API operation
+      description: Observed behavior from local research.
+      x-observed-host: commerce-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/Aid'
+        - $ref: '#/components/parameters/AppName'
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/DevicePlatform'
+        - $ref: '#/components/parameters/VersionCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [benefit_category]
+              properties:
+                benefit_category:
+                  oneOf:
+                    - type: integer
+                    - type: array
+                      items:
+                        type: integer
+              additionalProperties: true
+      responses:
+        '200':
+          description: Benefit states
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /lv/v1/sc/compliance_popup/fetch_all:
+    post:
+      tags: [Configuration]
+      operationId: fetchCompliancePopups
+      summary: Observed API operation
+      x-observed-host: feed-api-sg.capcutapi.com
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/Language'
+        - $ref: '#/components/parameters/Region'
+        - name: subdivision_id
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id]
+              properties:
+                user_id:
+                  type: string
+              additionalProperties: true
+      responses:
+        '200':
+          description: Compliance popup definitions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/FeedEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          compliance_popups:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                key:
+                                  type: string
+                                scene:
+                                  type: string
+                                priority:
+                                  type: integer
+                                emergency:
+                                  type: boolean
+                                title_text: {}
+                                content_text: {}
+                              additionalProperties: true
+                        additionalProperties: true
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /v1/list:
+    post:
+      tags: [Telemetry]
+      operationId: ingestEventBatches
+      summary: Observed API operation
+      x-observed-host: mcs-normal-sg.capcutapi.com
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TelemetryEnvelope'
+      responses:
+        '200':
+          description: Telemetry ingestion acknowledgement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelemetryAcknowledgement'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /v1/json:
+    post:
+      tags: [Telemetry]
+      operationId: ingestEvents
+      summary: Observed API operation
+      x-observed-host: mcs-normal-sg.capcutapi.com
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelemetryEnvelope'
+      responses:
+        '200':
+          description: Telemetry ingestion acknowledgement
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TelemetryAcknowledgement'
+                  - type: object
+                    properties:
+                      tc: {}
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+components:
+  securitySchemes:
+    XGorgon:
+      type: apiKey
+      in: header
+      name: X-Gorgon
+      description: Dynamic request signature observed on CapCut client traffic
+    XKhronos:
+      type: apiKey
+      in: header
+      name: X-Khronos
+      description: Timestamp paired with the request signature
+    XArgus:
+      type: apiKey
+      in: header
+      name: X-Argus
+    XLadon:
+      type: apiKey
+      in: header
+      name: X-Ladon
+    TDID:
+      type: apiKey
+      in: header
+      name: TDID
+    XSSDP:
+      type: apiKey
+      in: header
+      name: X-SS-DP
+
+  parameters:
+    AccessKey:
+      name: access_key
+      in: query
+      schema:
+        type: string
+      description: SDK or service access key observed in the query string
+    Aid:
+      name: aid
+      in: query
+      schema:
+        oneOf:
+          - type: integer
+          - type: string
+    AppName:
+      name: app_name
+      in: query
+      schema:
+        type: string
+    DeviceId:
+      name: device_id
+      in: query
+      schema:
+        type: string
+      description: Client device identifier; never commit a captured real value
+    DevicePlatform:
+      name: device_platform
+      in: query
+      schema:
+        type: string
+    Language:
+      name: language
+      in: query
+      schema:
+        type: string
+    Region:
+      name: region
+      in: query
+      schema:
+        type: string
+    VersionCode:
+      name: version_code
+      in: query
+      schema:
+        oneOf:
+          - type: integer
+          - type: string
+    VersionName:
+      name: version_name
+      in: query
+      schema:
+        type: string
+
+  responses:
+    UnexpectedError:
+      description: Unexpected API or transport error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    BaseEnvelope:
+      type: object
+      properties:
+        ret:
+          type: integer
+        errmsg:
+          type: string
+        log_id:
+          type: string
+        logid:
+          type: string
+        response: {}
+        sign:
+          type: string
+        svr_time:
+          oneOf:
+            - type: integer
+            - type: string
+        systime:
+          oneOf:
+            - type: integer
+            - type: string
+        data:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    FeedEnvelope:
+      type: object
+      properties:
+        ret:
+          type: integer
+        errmsg:
+          type: string
+        log_id:
+          type: string
+        svr_time:
+          oneOf:
+            - type: integer
+            - type: string
+        svr_timing:
+          type: object
+          additionalProperties: true
+        data:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        ret:
+          type: integer
+        errmsg:
+          type: string
+        message:
+          type: string
+        status_code:
+          type: integer
+        log_id:
+          type: string
+      additionalProperties: true
+
+    CategoryResourcesRequest:
+      type: object
+      required:
+        - app_id
+        - category_id
+        - category_key
+        - count
+        - offset
+        - panel
+      properties:
+        app_id:
+          oneOf:
+            - type: integer
+            - type: string
+        category_id:
+          oneOf:
+            - type: integer
+            - type: string
+        category_key:
+          type: string
+        count:
+          type: integer
+          minimum: 1
+          examples: [50]
+        offset:
+          type: integer
+          minimum: 0
+          examples: [0, 50, 100]
+        panel:
+          type: string
+          examples: [effects2, face-prop, default, transitions, subtitle-templates, filter]
+        panel_source:
+          type: string
+        full_count:
+          type: boolean
+        request_id:
+          type: string
+        replicate_sdk_version:
+          type: string
+        filter_optional:
+          type: object
+          additionalProperties: true
+        pack_optional:
+          type: object
+          additionalProperties: true
+        statistics_optional:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    PanelInfoRequest:
+      type: object
+      required: [panel, full_count]
+      properties:
+        panel:
+          type: string
+          examples: [default, transitions, subtitle-templates, filter]
+        full_count:
+          type: boolean
+        get_resource:
+          type: boolean
+        get_res_category_count:
+          type: integer
+        resource_count:
+          type: integer
+          minimum: 0
+          examples: [50]
+        category_status:
+          type: array
+          items: {}
+        only_commercial:
+          type: boolean
+        filter_optional:
+          type: object
+          additionalProperties: true
+        pack_optional:
+          type: object
+          additionalProperties: true
+        statistics_optional:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    EffectSearchRequest:
+      type: object
+      required: [app_id, count, effect_type, offset, query]
+      properties:
+        app_id:
+          oneOf:
+            - type: integer
+            - type: string
+        query:
+          type: string
+          examples: [Dynamic]
+        effect_type:
+          type: integer
+        count:
+          type: integer
+          minimum: 1
+          examples: [50]
+        offset:
+          type: integer
+          minimum: 0
+          examples: [0, 50]
+        need_recommend:
+          type: boolean
+        search_id:
+          type: string
+        replicate_sdk_version:
+          type: string
+        search_option:
+          type: object
+          additionalProperties: true
+        pack_optional:
+          type: object
+          additionalProperties: true
+        statistics_optional:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    SearchWordsRequest:
+      type: object
+      required: [app_id, effect_type]
+      properties:
+        app_id:
+          oneOf:
+            - type: integer
+            - type: string
+        effect_type:
+          type: integer
+      additionalProperties: true
+
+    MultiGetArtistItemRequest:
+      type: object
+      required: [app_id, id_list, scene]
+      properties:
+        app_id:
+          oneOf:
+            - type: integer
+            - type: string
+        id_list:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+        scene:
+          type: string
+        replicate_sdk_version:
+          type: string
+        pack_optional:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    CommonAttr:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+        name:
+          type: string
+        item_urls:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: object
+                additionalProperties: true
+        cover_url:
+          oneOf:
+            - type: string
+            - type: object
+              additionalProperties: true
+        category_ids:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+        has_favorited:
+          type: boolean
+        business_scope:
+          type: array
+          items: {}
+        sdk_model:
+          type: array
+          items: {}
+        requirements:
+          type: array
+          items: {}
+      additionalProperties: true
+
+    EffectItem:
+      type: object
+      properties:
+        common_attr:
+          $ref: '#/components/schemas/CommonAttr'
+        author:
+          type: object
+          additionalProperties: true
+        special_effect:
+          type: object
+          additionalProperties: true
+        template:
+          type: object
+          additionalProperties: true
+        subtitle_template:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    PaginatedEffectData:
+      type: object
+      required: [effect_item_list, has_more, next_offset]
+      properties:
+        effect_item_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/EffectItem'
+        has_more:
+          type: boolean
+        next_offset:
+          type: integer
+          minimum: 0
+        request_id:
+          type: string
+        version_code:
+          oneOf:
+            - type: integer
+            - type: string
+        fail_reason: {}
+        compress_data: {}
+        specific_item_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/EffectItem'
+      additionalProperties: true
+
+    EffectListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/PaginatedEffectData'
+
+    EffectSearchResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              allOf:
+                - $ref: '#/components/schemas/PaginatedEffectData'
+                - type: object
+                  properties:
+                    search_id:
+                      type: string
+                    effect_type:
+                      type: integer
+                    next_cursor:
+                      type: string
+                    related_words:
+                      type: array
+                      items: {}
+                    features:
+                      type: array
+                      items: {}
+                    customized_item_list:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/EffectItem'
+                    insert_effects:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/EffectItem'
+                  additionalProperties: true
+
+    EffectItemsResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                effect_item_list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/EffectItem'
+              additionalProperties: true
+
+    PanelCategory:
+      type: object
+      properties:
+        category_id:
+          oneOf:
+            - type: string
+            - type: integer
+        category_key:
+          type: string
+        category_name:
+          type: string
+        category_icon: {}
+        category_selected_icon: {}
+        category_is_top:
+          type: boolean
+        category_is_vip:
+          type: boolean
+        category_source: {}
+        parent_category: {}
+        sub_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/PanelCategory'
+      additionalProperties: true
+
+    PanelInfoResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                categories:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PanelCategory'
+                category_resources:
+                  type: object
+                  additionalProperties:
+                    $ref: '#/components/schemas/PaginatedEffectData'
+                panel_source: {}
+                version_code:
+                  oneOf:
+                    - type: integer
+                    - type: string
+              additionalProperties: true
+
+    SearchWord:
+      type: object
+      properties:
+        word:
+          type: string
+        query_id:
+          type: string
+        word_source:
+          oneOf:
+            - type: string
+            - type: integer
+      additionalProperties: true
+
+    SearchWordsResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                default_word:
+                  type: string
+                recommend_words:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: string
+                      - $ref: '#/components/schemas/SearchWord'
+                hot_words:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SearchWord'
+                grey_words:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SearchWord'
+                word_source:
+                  type: array
+                  items: {}
+                task_id:
+                  type: string
+              additionalProperties: true
+
+    MusicCollection:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+        name:
+          type: string
+        collection_type:
+          type: integer
+        cover_url:
+          type: string
+        create_time:
+          oneOf:
+            - type: integer
+            - type: string
+        update_time:
+          oneOf:
+            - type: integer
+            - type: string
+      additionalProperties: true
+
+    MusicCollectionsResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                collections:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MusicCollection'
+              additionalProperties: true
+
+    CollectionSongsRequest:
+      type: object
+      required: [collection_type, count, id, offset]
+      properties:
+        collection_type:
+          type: integer
+        count:
+          type: integer
+          minimum: 1
+          examples: [20, 50]
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+        offset:
+          type: integer
+          minimum: 0
+        filter_commercial:
+          type: boolean
+        only_enterprise_commercial:
+          type: boolean
+      additionalProperties: true
+
+    Song:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+        title:
+          type: string
+        author:
+          type: string
+        album:
+          type: string
+        duration:
+          oneOf:
+            - type: integer
+            - type: number
+        cover_url:
+          type: string
+        preview_url:
+          type: string
+        has_favorited:
+          type: boolean
+        is_commerce:
+          type: boolean
+        paid_type:
+          oneOf:
+            - type: integer
+            - type: string
+        status:
+          oneOf:
+            - type: integer
+            - type: string
+        beats:
+          type: array
+          items: {}
+        business_info:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+
+    CollectionSongsResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [songs, has_more, next_offset]
+              properties:
+                songs:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Song'
+                has_more:
+                  type: boolean
+                next_offset:
+                  type: integer
+                  minimum: 0
+                request_id:
+                  type: string
+                session_id:
+                  type: string
+              additionalProperties: true
+
+    TemplateCollection:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+        display_name:
+          type: string
+        capsules:
+          type: array
+          items: {}
+        direction: {}
+        enable_rcm:
+          type: boolean
+        filter_disable:
+          type: boolean
+        is_vip_tab:
+          type: boolean
+        root_category: {}
+        sub_type: {}
+      additionalProperties: true
+
+    TemplateCollectionsResponse:
+      allOf:
+        - $ref: '#/components/schemas/FeedEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                collections:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TemplateCollection'
+              additionalProperties: true
+
+    CollectionTemplatesRequest:
+      type: object
+      required: [count, cursor, id, scene, sdk_version]
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+        cursor:
+          oneOf:
+            - type: integer
+            - type: string
+          examples: [0, 12, 24]
+        count:
+          type: integer
+          minimum: 1
+          examples: [32]
+        scene:
+          type: string
+          examples: [edit_page-Template]
+        sdk_version:
+          type: string
+        client_tab:
+          type: string
+        client_rcm_params:
+          type: object
+          additionalProperties: true
+        filters:
+          type: array
+          items: {}
+        enable_server_impression_dedup:
+          type: boolean
+        filter_paid_template:
+          type: boolean
+        feed_recommend_req_index:
+          type: integer
+        daily_feed_recommend_req_index:
+          type: integer
+        from_group_id:
+          oneOf:
+            - type: string
+            - type: integer
+        new_home_page:
+          type: boolean
+        enter_from:
+          type: string
+      additionalProperties: true
+
+    TemplateItem:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: integer
+        title:
+          type: string
+        short_title:
+          type: string
+        cover_url:
+          type: string
+        optimized_cover_url:
+          type: string
+        video_url:
+          type: string
+        template_url:
+          type: string
+        duration:
+          oneOf:
+            - type: integer
+            - type: number
+        fragment_count:
+          type: integer
+        like_count:
+          type: integer
+        favorite_count:
+          type: integer
+        share_count:
+          type: integer
+        play_amount:
+          type: integer
+        purchase_count:
+          type: integer
+        author:
+          type: object
+          additionalProperties: true
+        interaction:
+          type: object
+          additionalProperties: true
+        material_list:
+          type: array
+          items: {}
+        functions:
+          type: array
+          items: {}
+        tag_strategy:
+          type: array
+          items: {}
+      additionalProperties: true
+
+    CollectionTemplatesResponse:
+      allOf:
+        - $ref: '#/components/schemas/FeedEnvelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [item_list, has_more, new_cursor]
+              properties:
+                item_list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TemplateItem'
+                has_more:
+                  type: boolean
+                new_cursor:
+                  oneOf:
+                    - type: integer
+                    - type: string
+              additionalProperties: true
+
+    TelemetryEvent:
+      type: object
+      required: [event]
+      properties:
+        event:
+          type: string
+          examples:
+            - enter_category
+            - click_material_thirdcategory
+            - show_material_item
+            - material_panel_tab_action
+        params:
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: string
+              description: Some client builds serialize params as a JSON string
+        local_time_ms:
+          type: integer
+      additionalProperties: true
+
+    TelemetryEnvelope:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/TelemetryEvent'
+        header:
+          type: object
+          additionalProperties: true
+        user:
+          type: object
+          additionalProperties: true
+        verbose:
+          type: boolean
+      additionalProperties: true
+
+    TelemetryAcknowledgement:
+      type: object
+      properties:
+        e:
+          type: integer
+        sc:
+          oneOf:
+            - type: integer
+            - type: string
+      additionalProperties: true
