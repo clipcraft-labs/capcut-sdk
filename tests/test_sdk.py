@@ -25,6 +25,12 @@ class SDKTests(unittest.TestCase):
         self.assertEqual((resource.id, resource.resource_id, resource.effect_id), ("1", "2", "3"))
         self.assertEqual(resource.category.panel, "effects2")
 
+    def test_catalog_resource_infers_panel_kind(self):
+        effect = Effect.from_dict({"common_attr": {"id": "1", "title": "synthetic"}})
+        self.assertEqual(CatalogResource.from_effect(effect, panel="transitions").kind, "transition")
+        self.assertEqual(CatalogResource.from_effect(effect, panel="filter").kind, "filter")
+        self.assertEqual(CatalogResource.from_effect(effect, panel="subtitle-templates").kind, "caption-template")
+
     def test_effect_list_uses_next_offset(self):
         def handler(request: httpx.Request):
             self.assertEqual(request.url.path, "/artist/v1/effect/get_resources_by_category_id")

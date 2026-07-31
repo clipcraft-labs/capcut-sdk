@@ -21,7 +21,15 @@ python -m pip install \
   "clipcraft-cli @ git+https://github.com/clipcraft-labs/clipcraft-cli.git"
 
 clipcraft catalog effects search blur
+clipcraft catalog panels categories --panel transitions
+clipcraft catalog resources list \
+  --panel transitions \
+  --category-id CATEGORY_ID
 clipcraft resolve effect blur --as hero-blur
+clipcraft resolve resource \
+  --panel transitions \
+  --category-id CATEGORY_ID \
+  --as intro-transition
 clipcraft project build project.json \
   --lock clipcraft.lock \
   --out build/demo
@@ -42,6 +50,12 @@ Generated drafts are build artifacts. The portable `project.json` and reviewed
 signed URLs, raw API responses, device identifiers, cookies, or Desktop index
 files.
 
+The same resource command supports known panels including `effects2`,
+`transitions`, `filter`, `face-prop`, `subtitle-templates`, and `default`.
+Stable catalogue records infer a corresponding kind such as `transition`,
+`filter`, or `caption-template` while preserving the selected panel and
+category in the lock.
+
 Desktop registration is intentionally plan-first:
 
 ```bash
@@ -58,4 +72,3 @@ Related repositories:
 - [CapCut Draft compiler](https://github.com/clipcraft-labs/capcut-draft)
 - [Clipcraft CLI](https://github.com/clipcraft-labs/clipcraft-cli)
 - [CapCut Research](https://github.com/clipcraft-labs/capcut-research)
-

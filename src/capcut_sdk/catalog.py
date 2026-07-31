@@ -6,6 +6,15 @@ from typing import Any
 from .models import Effect, PanelCategory
 from .music import MusicCollection, Song
 
+PANEL_KINDS = {
+    "effects2": "effect",
+    "transitions": "transition",
+    "filter": "filter",
+    "face-prop": "body-effect",
+    "subtitle-templates": "caption-template",
+    "default": "material",
+}
+
 
 def _first(mapping: dict[str, Any], *keys: str) -> Any:
     for key in keys:
@@ -45,7 +54,7 @@ class CatalogResource:
         cls,
         effect: Effect,
         *,
-        kind: str = "effect",
+        kind: str | None = None,
         panel: str | None = None,
         category_id: str | int | None = None,
         category_key: str | None = None,
@@ -63,7 +72,7 @@ class CatalogResource:
         commercial = _first(raw, "is_commerce", "is_commercial")
         return cls(
             provider="capcut",
-            kind=kind,
+            kind=kind or PANEL_KINDS.get(panel or "", "effect"),
             id=identifier,
             name=effect.title,
             effect_id=str(effect_id) if effect_id is not None else identifier,
