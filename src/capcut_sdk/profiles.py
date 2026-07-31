@@ -39,10 +39,12 @@ class ProfileStore:
 
     def __init__(self, root: Path | None = None):
         if root is None:
-            root = Path(os.getenv("CLIPCRAFT_CONFIG_HOME", ""))
-            if not root:
-                root = Path(os.getenv("XDG_CONFIG_HOME", Path.home() / ".config"))
-            root = root / "clipcraft-labs" / "capcut"
+            configured_root = os.getenv("CLIPCRAFT_CONFIG_HOME")
+            if configured_root:
+                root = Path(configured_root)
+            else:
+                root = Path(os.getenv("XDG_CONFIG_HOME", str(Path.home() / ".config")))
+                root = root / "clipcraft-labs" / "capcut"
         self.root = root
         self.profiles_dir = root / "profiles"
 
