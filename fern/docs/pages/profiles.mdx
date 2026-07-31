@@ -1,9 +1,20 @@
-# Profiles
+# Local profiles
 
 Profiles are stored in
 `~/.config/clipcraft-labs/capcut/profiles/default.toml` and are created on first
-use. Configure a real profile when an endpoint requires account or device
-authentication:
+use. The default profile uses generated local `device_id` and `iid` values,
+detects the local language and region, and starts in live mode. You do not need
+to export environment variables before using catalogue endpoints.
+
+```bash
+capcut effects search blur
+capcut auth profile show default
+```
+
+Generated identifiers work with the currently supported public catalogue
+requests, but they do not create a CapCut account or login session.
+Login-required endpoints may still reject the request. Configure a real
+profile only when you have values you are authorized to use:
 
 ```bash
 capcut auth profile set default \
@@ -13,3 +24,7 @@ capcut auth profile set default \
   --language ko-KR \
   --mode live
 ```
+
+Profile files are local configuration. Never commit them, raw captures,
+cookies, request signatures, or real device identifiers to a public
+repository.

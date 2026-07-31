@@ -1,12 +1,30 @@
-# CapCut API SDK
+# Clipcraft and the CapCut API SDK
 
-The CapCut API SDK provides a Python client and CLI for the observed CapCut
-Desktop API surface.
+Clipcraft is a local SDK and CLI toolchain for discovering CapCut catalogue
+resources and compiling portable JSON projects into CapCut Desktop drafts. It
+is not a hosted rendering service: catalogue requests, asset storage, project
+compilation, and Desktop registration run on your computer.
 
 ```bash
-python -m pip install git+https://github.com/clipcraft-labs/capcut-sdk.git
 capcut effects search "blur"
+clipcraft catalog effects search "blur"
 ```
 
-The first command creates a local default profile. Catalog endpoints can be
-queried immediately; login-required endpoints may require a real profile.
+Use `capcut` when you want direct SDK and observed API access. Use `clipcraft`
+when you want the complete reproducible project workflow:
+
+```text
+live catalogue search
+  -> normalized resource
+  -> clipcraft.lock
+  -> project.json
+  -> validated CapCut draft
+  -> optional Desktop registration
+```
+
+Start with [Install](./installation.mdx), then follow
+[Build your first project](./clipcraft-workflow.mdx). The project compiler is
+currently verified for CapCut Desktop 9.1.0 on macOS.
+
+Clipcraft is unofficial and is not affiliated with or endorsed by CapCut or
+ByteDance.

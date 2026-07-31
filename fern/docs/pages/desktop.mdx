@@ -1,0 +1,47 @@
+# CapCut Desktop integration
+
+Clipcraft can compile and register a draft locally, but it does not run a
+remote CapCut renderer. CapCut Desktop remains responsible for displaying,
+editing, rendering, and exporting the final video.
+
+## Compatibility
+
+The verified adapter targets CapCut Desktop 9.1.0 on macOS. Clipcraft refuses
+other target versions by default. This prevents silently writing a draft with
+an unverified version-specific layout.
+
+## Generated layout
+
+A build includes the primary draft JSON, metadata, timeline project index,
+timeline backup files, auxiliary JSON, and copied content-addressed media. It
+deliberately omits platform device, disk, and network identifiers.
+
+## Plan-first registration
+
+Registration has two phases. The default command returns a plan and makes no
+changes:
+
+```bash
+clipcraft project register DRAFT \
+  --drafts-dir "/path/to/CapCut/Desktop/drafts"
+```
+
+The apply form updates the selected Desktop project index:
+
+```bash
+clipcraft project register DRAFT \
+  --drafts-dir "/path/to/CapCut/Desktop/drafts" \
+  --apply
+```
+
+The draft must be a direct child of `--drafts-dir`. Existing metadata is
+copied to `.bak` before an in-place update.
+
+Launch CapCut after registration:
+
+```bash
+clipcraft project open DRAFT
+```
+
+Always inspect generated drafts and keep backups. Desktop registration changes
+local CapCut metadata; it does not upload the project or export a video.

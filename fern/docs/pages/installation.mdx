@@ -1,0 +1,36 @@
+# Install
+
+Clipcraft v0.1.0 is distributed as public GitHub Release wheels. Install the
+SDK, draft compiler, and unified CLI together:
+
+```bash
+python -m pip install \
+  https://github.com/clipcraft-labs/capcut-sdk/releases/download/v0.1.0/capcut_api_sdk-0.1.0-py3-none-any.whl \
+  https://github.com/clipcraft-labs/capcut-draft/releases/download/v0.1.0/clipcraft_capcut_draft-0.1.0-py3-none-any.whl \
+  https://github.com/clipcraft-labs/clipcraft-cli/releases/download/v0.1.0/clipcraft_cli-0.1.0-py3-none-any.whl
+```
+
+Verify both command-line tools:
+
+```bash
+capcut --help
+clipcraft --help
+```
+
+The packages provide different layers:
+
+- `capcut-api-sdk` provides the Python SDK, built-in request signer, profiles,
+  API models, and the `capcut` command.
+- `clipcraft-capcut-draft` provides the vendor-neutral Project parser, lockfile
+  reader, asset store, CapCut draft compiler, validator, and Desktop adapter.
+- `clipcraft-cli` combines catalogue discovery, resource resolution, and
+  project compilation under the `clipcraft` command.
+
+For development from a sibling checkout:
+
+```bash
+python -m pip install -e ../capcut-sdk -e ../capcut-draft -e ../clipcraft-cli
+```
+
+PyPI publication is not enabled yet, so `pip install clipcraft-cli` alone is
+not currently supported. Use the release wheels or source installation above.

@@ -1,0 +1,62 @@
+# Project JSON and lockfiles
+
+Clipcraft separates editable intent from dynamic provider identifiers.
+
+## `project.json`
+
+The versioned Project document is vendor-neutral source data. It defines:
+
+- the target application, Desktop version, and operating system;
+- canvas width, height, and frame rate;
+- video, audio, and text tracks;
+- item timing and reusable `ref` names;
+- effect, filter, transition, and caption-template operations.
+
+Validate it with:
+
+```bash
+clipcraft project validate project.json
+```
+
+The published JSON Schema is available at
+`https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/project.v1.schema.json`.
+
+## `clipcraft.lock`
+
+The lockfile makes a dynamic catalogue selection reproducible. Project
+operations refer to its keys instead of hard-coding CapCut IDs:
+
+```json
+{
+  "version": 1,
+  "resources": {
+    "hero-blur": {
+      "provider": "capcut",
+      "kind": "effect",
+      "id": "RESOURCE_ID",
+      "name": "Selected effect",
+      "effect_id": "EFFECT_ID",
+      "resource_id": "RESOURCE_ID"
+    }
+  }
+}
+```
+
+Create entries with `clipcraft resolve` rather than copying raw API response
+bodies. The compiler rejects secret-bearing URL query parameters. Music uses
+an `asset_hash` that resolves through the local content-addressed asset store.
+
+The lockfile schema is available at
+`https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/lock.v1.schema.json`.
+
+## Build contract
+
+```text
+project.json + clipcraft.lock + local assets
+  -> version adapter
+  -> CapCut draft files
+  -> structural validation
+```
+
+The generated CapCut JSON is never the source of truth. Rebuild it when the
+project, lockfile, compiler, or target adapter changes.

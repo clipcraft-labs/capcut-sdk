@@ -1,80 +1,153 @@
-# Clipcraft project workflow
+# Build your first project
 
-The API SDK is the live catalogue provider in a larger, vendor-neutral video
-build pipeline:
+This guide runs the complete local workflow: search the live catalogue, lock a
+resource, compile a portable project, validate the draft, and optionally add
+it to CapCut Desktop.
 
-```text
-CapCut API catalogue
-  -> stable CatalogResource records
-  -> clipcraft.lock
-  -> SHA-256 local asset store
-  -> Clipcraft Project compiler
-  -> validated CapCut Desktop draft
-```
+## 1. Search the catalogue
 
-Use the unified CLI when the end goal is a reproducible video project:
+Search editing effects:
 
 ```bash
-python -m pip install \
-  "capcut-api-sdk @ git+https://github.com/clipcraft-labs/capcut-sdk.git" \
-  "clipcraft-capcut-draft @ git+https://github.com/clipcraft-labs/capcut-draft.git" \
-  "clipcraft-cli @ git+https://github.com/clipcraft-labs/clipcraft-cli.git"
-
 clipcraft catalog effects search blur
+```
+
+Panels such as transitions and filters are category-driven. List their
+categories first, then use a returned category ID:
+
+```bash
 clipcraft catalog panels categories --panel transitions
 clipcraft catalog resources list \
   --panel transitions \
-  --category-id CATEGORY_ID
-clipcraft resolve effect blur --as hero-blur
+  --category-id CATEGORY_ID \
+  --category-key hot3
+```
+
+Known panels include `effects2` for video effects, `transitions`, `filter`,
+`face-prop` for body effects, `subtitle-templates`, and `default` for general
+materials. Category names and IDs come from the live panel response rather
+than a bundled static list.
+
+## 2. Resolve an exact resource
+
+Choose a search result and give it a stable project key:
+
+```bash
+clipcraft resolve effect blur \
+  --pick 1 \
+  --as hero-blur \
+  --lock clipcraft.lock
+```
+
+For a category resource:
+
+```bash
 clipcraft resolve resource \
   --panel transitions \
   --category-id CATEGORY_ID \
-  --as intro-transition
+  --category-key hot3 \
+  --pick 1 \
+  --as intro-transition \
+  --lock clipcraft.lock
+```
+
+`clipcraft.lock` records normalized provider, resource, effect, panel, and
+category identifiers. It intentionally excludes preview URLs and credentials.
+Review a lockfile before committing it.
+
+Music resolution downloads the selected preview into the local SHA-256 asset
+store and writes only its hash and size to the lockfile:
+
+```bash
+clipcraft catalog music collections
+clipcraft catalog music songs COLLECTION_ID --limit 10
+clipcraft resolve music COLLECTION_ID \
+  --pick 1 \
+  --as background-music \
+  --lock clipcraft.lock
+```
+
+## 3. Create `project.json`
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/project.v1.schema.json",
+  "version": 1,
+  "name": "My first Clipcraft project",
+  "target": { "app": "capcut", "version": "9.1.0", "os": "mac" },
+  "canvas": { "width": 1080, "height": 1920, "fps": 30 },
+  "tracks": [
+    {
+      "type": "text",
+      "items": [
+        {
+          "text": "Hello Clipcraft",
+          "at": 0,
+          "duration": 3,
+          "ref": "title"
+        }
+      ]
+    }
+  ],
+  "operations": [
+    { "type": "effect", "target": "title", "resource": "hero-blur" }
+  ]
+}
+```
+
+The project expresses intent; the lockfile supplies the exact catalogue
+identifiers. Local video and audio items can use a relative `src` path, while
+downloaded music uses a lockfile `resource` key.
+
+## 4. Validate and build
+
+```bash
+clipcraft project validate project.json
 clipcraft project build project.json \
   --lock clipcraft.lock \
   --out build/demo
 clipcraft project validate build/demo
 ```
 
-The verified compiler target is CapCut Desktop 9.1.0 on macOS. Draft layouts
-are version-specific, so other targets are rejected unless you explicitly pass
-`--allow-unsupported-version` and manually review the generated files against
-that Desktop release.
+The output contains CapCut draft metadata, timeline mirrors, and
+content-addressed local assets. Generated drafts are disposable build
+artifacts; keep `project.json`, the reviewed `clipcraft.lock`, and your source
+media as the source of truth.
 
-Music resolution downloads a preview to a content-addressed local store and
-records only its SHA-256 hash and size in the lock file:
+The verified compiler target is CapCut Desktop 9.1.0 on macOS. Other versions
+are rejected by default because their draft layouts may differ. The
+`--allow-unsupported-version` flag is an explicit escape hatch for users who
+have manually reviewed another Desktop format.
+
+## 5. Register with CapCut Desktop
+
+Build directly inside the CapCut drafts directory or move the completed draft
+there. Registration requires the draft to be a direct child of the selected
+directory.
+
+First inspect the plan without writing:
 
 ```bash
-clipcraft resolve music COLLECTION_ID \
-  --pick 1 \
-  --as background-music
+clipcraft project register build/demo \
+  --drafts-dir "/path/to/CapCut/Desktop/drafts"
 ```
 
-Generated drafts are build artifacts. The portable `project.json` and reviewed
-`clipcraft.lock` remain the source of truth. Do not commit downloaded media,
-signed URLs, raw API responses, device identifiers, cookies, or Desktop index
-files.
-
-The same resource command supports known panels including `effects2`,
-`transitions`, `filter`, `face-prop`, `subtitle-templates`, and `default`.
-Stable catalogue records infer a corresponding kind such as `transition`,
-`filter`, or `caption-template` while preserving the selected panel and
-category in the lock.
-
-Desktop registration is intentionally plan-first:
+Apply only after reviewing the paths:
 
 ```bash
-clipcraft project register build/demo --drafts-dir /path/to/Desktop/drafts
-clipcraft project register build/demo --drafts-dir /path/to/Desktop/drafts --apply
+clipcraft project register build/demo \
+  --drafts-dir "/path/to/CapCut/Desktop/drafts" \
+  --apply
 clipcraft project open build/demo
 ```
 
-The apply form writes only inside the selected drafts directory and preserves
-existing metadata with `.bak` files.
+Registration backs up existing index metadata with `.bak` files. Opening the
+application does not automatically render or export a finished video; review
+the generated project in CapCut Desktop and use its export UI.
 
-Related repositories:
+## What to commit
 
-- [CapCut SDK](https://github.com/clipcraft-labs/capcut-sdk)
-- [CapCut Draft compiler](https://github.com/clipcraft-labs/capcut-draft)
-- [Clipcraft CLI](https://github.com/clipcraft-labs/clipcraft-cli)
-- [CapCut Research](https://github.com/clipcraft-labs/capcut-research)
+Safe project repositories normally contain `project.json`, a reviewed
+`clipcraft.lock`, and media you are licensed to distribute. Do not commit raw
+API responses, signed URLs, profile files, device IDs, cookies, downloaded
+catalogue assets, CapCut application files, or Desktop project indexes.

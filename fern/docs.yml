@@ -18,12 +18,22 @@ navigation:
         contents:
           - page: Welcome
             path: docs/pages/getting-started.mdx
+          - page: Install
+            path: docs/pages/installation.mdx
           - page: Profiles
             path: docs/pages/profiles.mdx
-          - page: CLI
-            path: docs/pages/cli.mdx
-          - page: Clipcraft workflow
+          - page: Build your first project
             path: docs/pages/clipcraft-workflow.mdx
+      - section: Build projects
+        contents:
+          - page: Project JSON and lockfiles
+            path: docs/pages/project-format.mdx
+          - page: CapCut Desktop integration
+            path: docs/pages/desktop.mdx
+      - section: Reference
+        contents:
+          - page: CLI commands
+            path: docs/pages/cli.mdx
   - tab: API Reference
     layout:
       - api: CapCut Desktop Unofficial API
