@@ -165,6 +165,11 @@ def main(argv: list[str] | None = None) -> int:
                         if not suffix:
                             content_type = response.headers.get("content-type", "").split(";", 1)[0]
                             suffix = {"audio/mpeg": ".mp3", "audio/mp4": ".m4a", "audio/wav": ".wav", "audio/x-wav": ".wav"}.get(content_type, ".bin")
+                        # CapCut preview URLs often return generic octet-stream
+                        # headers; ISO-BMFF audio files identify themselves with
+                        # an `ftyp` box and should be saved as playable M4A.
+                        if response.content[4:8] == b"ftyp":
+                            suffix = ".m4a"
                         destination = args.download_dir / f"{index:02d}-{song.id}{suffix}"
                         destination.write_bytes(response.content)
                         downloaded.append({"id": song.id, "title": song.title, "path": str(destination)})
