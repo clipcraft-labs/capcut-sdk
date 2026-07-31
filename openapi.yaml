@@ -1144,7 +1144,14 @@ components:
       properties:
         panel:
           type: string
-          examples: [default, transitions, subtitle-templates, filter]
+          description: >-
+            Internal panel identifier. Known identifiers observed in the desktop
+            client are `effects2` (editing effects), `transitions` (transitions),
+            `filter` (filters), `face-prop` (body/face effects),
+            `subtitle-templates` (caption templates), and `default` (general
+            materials). The service may add more identifiers; use getPanelInfo
+            to discover the categories for a value.
+          examples: [effects2, face-prop, default, transitions, subtitle-templates, filter]
         full_count:
           type: boolean
         get_resource:
