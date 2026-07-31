@@ -43,6 +43,15 @@ class TemplatesClient:
         data = self._transport.post("/lv/v1/pc/replicate/get_collection_templates", params=_params(self._transport.config), json_body=body, base_url=self._transport.config.base_url).get("data") or {}
         return CursorPage([Template.from_dict(value) for value in data.get("item_list") or []], str(data.get("new_cursor")) if data.get("new_cursor") is not None else None, bool(data.get("has_more")), data)
 
+    def iter(self, collection_id: str | int, *, cursor: str | int = 0, count: int = 32, scene: str = "edit_page-Template", sdk_version: str = "9.1.0"):
+        """Yield every cursor page while the API reports more results."""
+        while True:
+            page = self.list(collection_id, cursor=cursor, count=count, scene=scene, sdk_version=sdk_version)
+            yield page
+            if not page.has_more or page.next_cursor is None or page.next_cursor == str(cursor):
+                return
+            cursor = page.next_cursor
+
 
 def _params(config) -> list[tuple[str, str]]:
     return [("aid", str(config.app_id)), ("app_name", config.app_name), ("device_id", config.device.device_id), ("device_platform", config.device.device_platform), ("version_code", config.version_code)]

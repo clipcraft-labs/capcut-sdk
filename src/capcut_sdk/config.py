@@ -34,6 +34,7 @@ class SDKConfig:
     service: str = "heycan-api-sg"
     editor_service: str = "editor-api-sg"
     timeout: float = 30.0
+    mode: str = "offline"
 
     @property
     def base_url(self) -> str:

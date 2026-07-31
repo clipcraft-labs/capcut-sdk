@@ -47,6 +47,15 @@ class MusicClient:
         data = self._transport.post("/lv/v1/get_collection_songs", params=_params(self._transport.config), json_body=body, base_url=self._transport.config.editor_base_url).get("data") or {}
         return Page([Song.from_dict(value) for value in data.get("songs") or []], data.get("next_offset"), bool(data.get("has_more")), data)
 
+    def iter_songs(self, collection_id: str | int, *, collection_type: int = 0, count: int = 20, offset: int = 0):
+        """Yield every song page while the API reports more results."""
+        while True:
+            page = self.songs(collection_id, collection_type=collection_type, count=count, offset=offset)
+            yield page
+            if not page.has_more or page.next_offset is None or page.next_offset == offset:
+                return
+            offset = page.next_offset
+
 
 def _params(config) -> list[tuple[str, str]]:
     return [("aid", str(config.app_id)), ("device_id", config.device.device_id), ("language", config.language), ("region", config.region)]

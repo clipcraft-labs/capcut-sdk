@@ -2,19 +2,32 @@
 
 import argparse
 import json
-import os
 import sys
 
 from .client import CapCutClient
-from .config import DeviceProfile, SDKConfig
 from .errors import ConfigurationError
 from .operations import OPERATIONS
+from .profiles import ProfileStore, config_from_environment
 from .signing import CapCutSigner
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="capcut", description="Unofficial capture-backed CapCut API SDK")
     sub = parser.add_subparsers(dest="command")
+    auth = sub.add_parser("auth", help="Manage local profiles")
+    auth_sub = auth.add_subparsers(dest="auth_command", required=True)
+    profile = auth_sub.add_parser("profile", help="Manage a local TOML profile")
+    profile_sub = profile.add_subparsers(dest="profile_command", required=True)
+    profile_sub.add_parser("list")
+    show = profile_sub.add_parser("show")
+    show.add_argument("name", nargs="?", default="default")
+    set_profile = profile_sub.add_parser("set")
+    set_profile.add_argument("name", nargs="?", default="default")
+    set_profile.add_argument("--device-id")
+    set_profile.add_argument("--iid")
+    set_profile.add_argument("--region")
+    set_profile.add_argument("--language")
+    set_profile.add_argument("--mode", choices=["offline", "live", "replay"])
     api = sub.add_parser("api", help="Inspect the SDK API surface")
     api.add_argument("action", choices=["status"], nargs="?", default="status")
     call = sub.add_parser("call", help="Call an OpenAPI operation directly")
@@ -63,13 +76,41 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "api":
         print(json.dumps({"sdk": "capcut-api-sdk", "status": "alpha", "operations": [operation.__dict__ if hasattr(operation, "__dict__") else {"operation_id": operation.operation_id, "group": operation.group, "status": operation.status} for operation in OPERATIONS]}, ensure_ascii=False))
         return 0
+    if args.command == "auth" and args.auth_command == "profile":
+        store = ProfileStore()
+        if args.profile_command == "list":
+            print(json.dumps(store.names()))
+        elif args.profile_command == "show":
+            values = store.load(args.name)
+            device = values.get("device", {})
+            for key in ("device_id", "iid"):
+                if key in device and len(str(device[key])) > 8:
+                    device[key] = str(device[key])[:4] + "..." + str(device[key])[-4:]
+            print(json.dumps(values, indent=2))
+        else:
+            values = store.load(args.name) if args.name in store.names() else store.default_profile()
+            values.setdefault("device", {})
+            values.setdefault("locale", {})
+            values.setdefault("profile", {})
+            for section, key, value in (
+                ("device", "device_id", args.device_id),
+                ("device", "iid", args.iid),
+                ("locale", "region", args.region),
+                ("locale", "language", args.language),
+                ("profile", "mode", args.mode),
+            ):
+                if value is not None:
+                    values[section][key] = value
+            store.save(args.name, values)
+            print(f"Saved profile: {args.name}")
+        return 0
     if args.command in {"effects", "panels", "music", "templates", "aigc", "call", "config"}:
         try:
-            device_id = os.environ["CAPCUT_DEVICE_ID"]
-            iid = os.environ["CAPCUT_IID"]
-        except KeyError as exc:
-            raise ConfigurationError("Set CAPCUT_DEVICE_ID and CAPCUT_IID before using live CLI commands") from exc
-        config = SDKConfig(device=DeviceProfile(device_id, iid), region=os.getenv("CAPCUT_REGION", "KR"), language=os.getenv("CAPCUT_LANGUAGE", "ko-KR"))
+            config = config_from_environment()
+        except (FileNotFoundError, KeyError) as exc:
+            raise ConfigurationError("Unable to load the local CapCut profile") from exc
+        if config.mode != "live":
+            raise ConfigurationError("Live API commands require CAPCUT_MODE=live or profile mode=live")
         client = CapCutClient(config, signer=CapCutSigner())
         if args.command == "call":
             if args.method == "GET":

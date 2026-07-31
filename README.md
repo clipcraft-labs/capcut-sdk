@@ -20,6 +20,33 @@ capcut api status
 python -m capcut_sdk api status
 ```
 
+The first profile-aware command creates a local offline profile at
+`~/.config/clipcraft-labs/capcut/profiles/default.toml`. It contains synthetic
+device and install identifiers, so the SDK can be inspected without CapCut
+authentication or network access:
+
+```bash
+capcut auth profile list
+capcut auth profile show
+capcut auth profile set default --region KR --language ko-KR
+```
+
+Live requests require an explicit mode switch. Environment variables override
+the profile for one process:
+
+```bash
+CAPCUT_MODE=live \
+CAPCUT_DEVICE_ID='your-device-id' \
+CAPCUT_IID='your-install-id' \
+capcut effects search 'blur'
+```
+
+The default mode is `offline`; it never sends synthetic identifiers to a
+remote service.
+
+See [`docs/profiles.md`](./docs/profiles.md) for profile storage, environment
+overrides, and live-mode rules.
+
 Live commands use caller-provided identifiers and the built-in CapCut signer:
 
 ```bash
