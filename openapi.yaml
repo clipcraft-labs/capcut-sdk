@@ -1568,6 +1568,8 @@ components:
           type: string
         preview_url:
           type: string
+          format: uri
+          description: Public preview audio URL used by the CLI download option; availability and licensing are service-controlled.
         has_favorited:
           type: boolean
         is_commerce:

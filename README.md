@@ -64,7 +64,7 @@ still return an authentication error.
 The SDK currently exposes these operation groups:
 
 - Effects: list by category, search, search words, panel information
-- Music: collections, music-effect collections, and collection songs
+- Music: collections, sound-effect collections, collection songs, and local preview downloads
 - Templates: collections and cursor-paginated template items
 - AIGC: random prompts
 - Configuration: effect settings, remote settings, model metadata, monitor
@@ -88,6 +88,10 @@ capcut call /artist/v1/effect/search request.json
 All paginated clients expose page metadata such as `has_more`, `next_offset`,
 and `next_cursor`. Use `iter_pages`, `iter_songs`, or `iter` when you want to
 walk every page.
+
+`music songs --download-dir` downloads each returned `preview_url` locally and
+stores ISO-BMFF/AAC previews as `.m4a` when the server response identifies that
+format. Downloaded previews remain local and should not be committed.
 
 ## Python
 
