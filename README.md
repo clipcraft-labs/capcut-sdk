@@ -24,10 +24,10 @@ capcut auth profile show
 capcut api status
 ```
 
-The default profile uses synthetic identifiers and `offline` mode. It is safe
-for exploring the CLI and running local tests.
+The default profile is created with generated local identifiers and `live`
+mode, so supported catalog endpoints can be queried immediately.
 
-To configure a real profile for live requests:
+To replace the generated identifiers with a real profile:
 
 ```bash
 capcut auth profile set default \
@@ -44,8 +44,9 @@ Profiles are stored locally at:
 ~/.config/clipcraft-labs/capcut/profiles/default.toml
 ```
 
-No environment variables are required for normal use. Live requests require
-real identifiers and an explicitly enabled `live` profile.
+No environment variables are required for normal use. Generated identifiers
+work for some catalog endpoints; login-required endpoints may still return an
+authentication error.
 
 ## Supported API operations
 

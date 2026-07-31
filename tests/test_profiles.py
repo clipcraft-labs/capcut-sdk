@@ -14,7 +14,7 @@ class ProfileStoreTests(unittest.TestCase):
             config = store.sdk_config()
             self.assertTrue(config.device.device_id.startswith("local-device-"))
             self.assertTrue(config.device.iid.startswith("local-install-"))
-            self.assertEqual(config.mode, "offline")
+            self.assertEqual(config.mode, "live")
             self.assertEqual(store.default_path.stat().st_mode & 0o777, 0o600)
 
     def test_environment_values_override_profile(self):

@@ -64,7 +64,7 @@ class ProfileStore:
     def default_profile(self) -> dict[str, Any]:
         region, language = _default_locale()
         return {
-            "profile": {"name": "default", "mode": "offline"},
+            "profile": {"name": "default", "mode": "live"},
             "device": {
                 "device_id": _synthetic_id("local-device"),
                 "iid": _synthetic_id("local-install"),
@@ -104,7 +104,7 @@ class ProfileStore:
             ),
             region=str(locale_values.get("region", "US")),
             language=str(locale_values.get("language", "en-US")),
-            mode="live" if live is True else str(profile.get("mode", "offline")),
+            mode="live" if live is True else str(profile.get("mode", "live")),
         )
 
 
@@ -120,7 +120,7 @@ def config_from_environment(store: ProfileStore | None = None) -> SDKConfig:
     device["iid"] = os.getenv("CAPCUT_IID", device.get("iid", ""))
     locale_values["region"] = os.getenv("CAPCUT_REGION", locale_values.get("region", "US"))
     locale_values["language"] = os.getenv("CAPCUT_LANGUAGE", locale_values.get("language", "en-US"))
-    profile["mode"] = os.getenv("CAPCUT_MODE", profile.get("mode", "offline"))
+    profile["mode"] = os.getenv("CAPCUT_MODE", profile.get("mode", "live"))
     return SDKConfig(
         device=DeviceProfile(str(device["device_id"]), str(device["iid"])),
         region=str(locale_values["region"]),

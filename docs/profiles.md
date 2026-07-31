@@ -7,9 +7,9 @@ TOML files stored outside the repository:
 ~/.config/clipcraft-labs/capcut/profiles/default.toml
 ```
 
-The default profile uses synthetic device and install identifiers and starts
-in `offline` mode. It is safe for inspecting the CLI and running local tests;
-it must not be used for live CapCut requests.
+The default profile uses generated local device and install identifiers and
+starts in `live` mode. Supported catalog endpoints can be queried immediately;
+login-required endpoints may still return an authentication error.
 
 ```bash
 capcut auth profile list
