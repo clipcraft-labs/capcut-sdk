@@ -3,15 +3,15 @@ import unittest
 
 import httpx
 
-from capcut_sdk import CapCutClient, DeviceProfile, Method2Signer, SDKConfig
+from capcut_sdk import CapCutClient, CapCutSigner, DeviceProfile, SDKConfig
 from capcut_sdk.models import Effect
 from capcut_sdk.transport import HttpTransport
 
 
 class SDKTests(unittest.TestCase):
-    def test_method2_signer_emits_required_headers(self):
+    def test_capcut_signer_emits_required_headers(self):
         config = SDKConfig(device=DeviceProfile("dummy-device", "dummy-iid"))
-        headers = Method2Signer().headers(query="aid=359289", body=b"{}", config=config)
+        headers = CapCutSigner().headers(query="aid=359289", body=b"{}", config=config)
         self.assertEqual(set(headers), {"X-Khronos", "X-SS-STUB", "X-Gorgon", "X-Ladon", "X-Argus", "X-SS-DP", "TDID"})
         self.assertEqual(headers["X-SS-DP"], "359289")
 

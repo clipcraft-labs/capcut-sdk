@@ -9,7 +9,7 @@ from .client import CapCutClient
 from .config import DeviceProfile, SDKConfig
 from .errors import ConfigurationError
 from .operations import OPERATIONS
-from .signing import Method2Signer
+from .signing import CapCutSigner
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -70,7 +70,7 @@ def main(argv: list[str] | None = None) -> int:
         except KeyError as exc:
             raise ConfigurationError("Set CAPCUT_DEVICE_ID and CAPCUT_IID before using live CLI commands") from exc
         config = SDKConfig(device=DeviceProfile(device_id, iid), region=os.getenv("CAPCUT_REGION", "KR"), language=os.getenv("CAPCUT_LANGUAGE", "ko-KR"))
-        client = CapCutClient(config, signer=Method2Signer())
+        client = CapCutClient(config, signer=CapCutSigner())
         if args.command == "call":
             if args.method == "GET":
                 result = client.raw.get(args.path, service=args.service)

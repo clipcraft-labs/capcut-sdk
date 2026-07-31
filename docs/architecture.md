@@ -7,15 +7,14 @@ openapi.yaml                 observed API contract
         |
 tools/openapi_inventory.py   deterministic converter/scaffold metadata
         |
-src/capcut_sdk/              public Python SDK and CLI
+src/capcut_sdk/              public Python SDK, CLI, and built-in signer
         |
-method2/capcut_method2/      signing research implementation and vectors
+capcut-research/signing/     separate native analysis and research evidence
 ```
 
-The SDK transport accepts a signer through a protocol. This keeps HTTP,
-request models, and domain clients independent from the current Method 2
-implementation and allows a future signer to be substituted without changing
-the public client API.
+The SDK transport accepts a signer through a protocol. The default
+`CapCutSigner` is bundled in the SDK, while native analysis and research
+evidence remain in the separate research repository.
 
 ## Promotion workflow
 
@@ -29,4 +28,3 @@ The public repository may contain OpenAPI schemas, synthetic vectors,
 sanitised fixtures, and documentation. It must not contain raw MITM captures,
 cookies, device/install identifiers, account identifiers, access tokens, or
 live request signatures. Raw captures remain local research inputs.
-

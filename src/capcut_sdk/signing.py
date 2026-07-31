@@ -1,8 +1,8 @@
-"""Method 2 signer adapter.
+"""Built-in CapCut request signer.
 
-The cryptographic implementation remains in the research-compatible
-``capcut_method2`` package for now. This adapter is the stable SDK boundary;
-it can be replaced by a vendored implementation without changing clients.
+The SDK ships the verified pure-Python signing primitives in
+``capcut_sdk.auth``. Research notes and native tracing tools live in the
+separate ``capcut-research`` repository.
 """
 
 import time
@@ -11,7 +11,7 @@ from .config import SDKConfig
 from .errors import ConfigurationError
 
 try:
-    from capcut_method2 import x_argus, x_gorgon, x_khronos, x_ladon, x_ss_stub
+    from .auth import x_argus, x_gorgon, x_khronos, x_ladon, x_ss_stub
 except ImportError as exc:  # pragma: no cover - exercised by packaging checks
     x_argus = x_gorgon = x_khronos = x_ladon = x_ss_stub = None
     _IMPORT_ERROR = exc
@@ -19,13 +19,13 @@ else:
     _IMPORT_ERROR = None
 
 
-class Method2Signer:
-    """Generate the headers required by the observed CapCut desktop client."""
+class CapCutSigner:
+    """Generate headers required by the observed CapCut desktop client."""
 
     def headers(self, *, query: str, body: bytes, config: SDKConfig) -> dict[str, str]:
         if _IMPORT_ERROR is not None:
             raise ConfigurationError(
-                "Method 2 support is unavailable; install the bundled capcut_method2 package"
+                "Built-in CapCut signing support is unavailable"
             ) from _IMPORT_ERROR
         timestamp = int(time.time())
         stub = x_ss_stub(body)
@@ -38,4 +38,3 @@ class Method2Signer:
             "X-SS-DP": str(config.app_id),
             "TDID": config.device.device_id,
         }
-

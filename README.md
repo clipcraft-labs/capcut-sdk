@@ -20,7 +20,7 @@ capcut api status
 python -m capcut_sdk api status
 ```
 
-Live commands use caller-provided identifiers and Method 2 signing:
+Live commands use caller-provided identifiers and the built-in CapCut signer:
 
 ```bash
 export CAPCUT_DEVICE_ID='your-device-id'
@@ -42,8 +42,8 @@ Do not put these values in shell history, fixtures, or source control.
 
 Signing is injected through a transport boundary so credentials, device
 profiles, and future signer implementations remain outside endpoint clients.
-The bundled `Method2Signer` connects the SDK to the currently verified
-pure-Python signing implementation.
+The bundled `CapCutSigner` provides the currently verified pure-Python signing
+implementation without requiring the research repository.
 
 ## OpenAPI scaffolding
 
@@ -115,8 +115,9 @@ cookies, device identifiers, or signature values. Signing implementation is
 outside this document's scope.
 
 See the [`capcut-research` harness](https://github.com/clipcraft-labs/capcut-research)
-for native runtime experiments. See [`method2/README.md`](./method2/README.md)
-for the pure-Python signing implementation.
+for native runtime experiments. See the
+[`pure-python-signer` research notes](https://github.com/clipcraft-labs/capcut-research/tree/main/signing/pure-python-signer)
+behind the built-in signer.
 
 ## Notes
 
