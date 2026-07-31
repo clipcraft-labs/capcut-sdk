@@ -36,6 +36,11 @@ clipcraft project build project.json \
 clipcraft project validate build/demo
 ```
 
+The verified compiler target is CapCut Desktop 9.1.0 on macOS. Draft layouts
+are version-specific, so other targets are rejected unless you explicitly pass
+`--allow-unsupported-version` and manually review the generated files against
+that Desktop release.
+
 Music resolution downloads a preview to a content-addressed local store and
 records only its SHA-256 hash and size in the lock file:
 
