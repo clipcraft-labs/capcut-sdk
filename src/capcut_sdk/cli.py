@@ -40,7 +40,7 @@ def build_parser() -> argparse.ArgumentParser:
     search = effects_sub.add_parser("search")
     search.add_argument("query")
     search.add_argument("--offset", type=int, default=0)
-    search.add_argument("--count", type=int, default=50)
+    search.add_argument("--count", type=int, default=50, help="Number of results (default: 50)")
     words = effects_sub.add_parser("words")
     panels = sub.add_parser("panels", help="Query CapCut material panels (effects2=editing effects)")
     panels_sub = panels.add_subparsers(dest="panels_command", required=True)
@@ -68,11 +68,11 @@ def build_parser() -> argparse.ArgumentParser:
     aigc_sub = aigc.add_subparsers(dest="aigc_command", required=True)
     prompts = aigc_sub.add_parser("prompts")
     prompts.add_argument("models", nargs="+", help="Model names")
-    prompts.add_argument("--scene", default="default")
+    prompts.add_argument("--scene", default="default", help="Client UI scene/context, usually default")
     config = sub.add_parser("config", help="Query remote configuration")
     config_sub = config.add_subparsers(dest="config_command", required=True)
     general = config_sub.add_parser("effect-general")
-    general.add_argument("--scene", default="default")
+    general.add_argument("--scene", default="default", help="Client UI scene/context, usually default")
     config_sub.add_parser("remote-settings")
     return parser
 
