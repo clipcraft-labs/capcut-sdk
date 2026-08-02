@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/project.v1.schema.json",
+  "version": 1,
+  "name": "Surreal Video Call — frame-matched style study",
+  "target": {"app": "capcut", "version": "9.1.0", "os": "mac"},
+  "canvas": {"width": 1080, "height": 1920, "fps": 30, "ratio": "9:16"},
+  "tracks": [{
+    "type": "image", "name": "Four frame-locked states", "items": [
+      {"src": "assets/intro.png", "at": 0, "duration": 0.9, "ref": "intro", "fit": "cover"},
+      {"src": "assets/incoming.png", "at": 0.9, "duration": 6.133333, "ref": "incoming", "fit": "cover"},
+      {"src": "assets/accepting.png", "at": 7.033333, "duration": 1.333334, "ref": "accepting", "fit": "cover"},
+      {"src": "assets/connected.png", "at": 8.366667, "duration": 6.633334, "ref": "connected", "fit": "cover"}
+    ]
+  }],
+  "operations": [
+    {"type": "effect", "target": "accepting", "resource": "hook-flash", "intensity": 0.42}
+  ]
+}

@@ -1,0 +1,143 @@
+---
+title: Recreate a viral edit rhythm
+description: Build and headlessly render an original 15-second video whose state changes match a popular TikTok reference frame-for-frame.
+---
+
+This guide is a style study, not a copy. It measures the edit rhythm of one
+popular public TikTok and recreates that rhythm with original artwork, copy,
+colors, and branding. The reference video and its audio are never included in
+the repository or render package.
+
+## Why this reference
+
+The reference is Apple’s surreal [“hello?” TikTok](https://www.tiktok.com/@apple/video/7613820709629971725),
+where a lemon receives a video call from a lime. A [March 2026 report](https://www.ypulse.com/newsfeed/2026/03/10/apple-is-trying-out-a-new-gen-z-style-marketing-approach/)
+described the post as having 3.4 million views and 165,000 likes. TikTok Creative Center
+is the public source of current trend and high-performing creative examples;
+popularity changes over time, so treat these figures as a dated snapshot.
+
+The format is useful because its joke is mostly editing grammar: an abstract
+hook, a long incoming-call hold, a sudden acceptance, and a larger connected
+call window. That grammar can be reproduced without copying the fruit footage,
+Apple UI, sound, or brand assets.
+
+## Measured timeline
+
+The source is 1080×1920, 29.97 fps, 450 frames, and 15.023 seconds. For a
+30 fps Clipcraft project, each measured event is rounded to the nearest frame.
+
+| Event | Reference time | Reference at 30 fps | Project frame | Delta |
+| --- | ---: | ---: | ---: | ---: |
+| Incoming-call UI appears | 0.900901 s | 27 | 27 | 0 |
+| Call is accepted | 7.040374 s | 211 | 211 | 0 |
+| Call window expands | 8.375042 s | 251 | 251 | 0 |
+| End | 15.023311 s | 450 frames | 450 frames | 0 |
+
+This is frame-matched structure, not pixel identity. The example replaces the
+original expression with a “Clipcraft calls the renderer” joke.
+
+## Get the example
+
+The source files live in
+[`examples/surreal-video-call`](https://github.com/clipcraft-labs/capcut-sdk/tree/main/examples/surreal-video-call).
+Install `ffmpeg` and `librsvg`, then generate the four original PNG cards:
+
+```bash
+cd examples/surreal-video-call
+./make-assets.sh
+```
+
+The Project JSON uses exact frame boundaries. Decimal seconds are only the JSON
+representation of frames 27, 211, and 251 on a 30 fps canvas.
+
+## Resolve the CapCut effect ID
+
+The example adds one native CapCut effect during the acceptance beat. Resolve
+the exact ID to the same readable key used by `project.json`:
+
+```bash
+clipcraft resolve id 7399465317946264838 \
+  --kind effect \
+  --as hook-flash \
+  --lock clipcraft.lock
+```
+
+The project never contains a CapCut cache path. `resolve` writes the provider
+ID to the lock. During `project render`, Clipcraft refreshes the bundle URL,
+downloads and verifies the bundle in the local resource cache, packages it,
+and writes the ID-to-local-path map consumed by VEHelper.
+
+## Render without opening CapCut
+
+The public wheels do not redistribute CapCut or the verified native runner.
+On a machine with CapCut Desktop 9.1.0 for macOS and an authorized runner, use:
+
+```bash
+export CLIPCRAFT_HEADLESS_RENDERER=/absolute/path/to/render_capcut_headless.sh
+
+clipcraft project render project.json \
+  --lock clipcraft.lock \
+  --work-dir build/headless \
+  --exact-frames 450 \
+  --out build/surreal-video-call.mp4
+```
+
+This single command validates and compiles the JSON, resolves resource IDs,
+packages local resource paths, runs preflight, invokes the native renderer
+without opening the Desktop UI, probes the MP4, and audits the VEHelper log.
+CapCut’s native exporter can include one boundary frame when an effect ends at
+the timeline boundary. `--exact-frames 450` packet-copies the native streams
+and drops only excess video packets; it does not re-encode the video.
+
+## Verify frames and native resources
+
+```bash
+./verify-render.sh build/surreal-video-call.mp4
+```
+
+The verified macOS run produced 1080×1920 H.264 at 30 fps, exactly 450 video
+frames and 15.000 seconds. The native audit reported one direct resource-map
+entry, zero unresolved resources, and zero native parse failures.
+
+To prove that the exact-ID effect changed pixels—not merely that its path was
+present in a log—we also rendered the same timeline with `operations: []` and
+compared every frame with FFmpeg SSIM:
+
+```bash
+./verify-render.sh build/surreal-video-call.mp4 build/no-effect-baseline.mp4
+```
+
+Exactly 50 frames changed, from project frame 211 through 260. Mean SSIM across
+those changed frames was `0.94647164`; every frame outside that window was
+pixel-identical after decode. The flash therefore starts on the measured
+acceptance beat, while its authored tail continues nine frames into the next
+state.
+
+The event manifest is in `expected-events.json`. It records both measured
+reference times and project frames with a tolerance of one frame.
+
+## A packaging failure that mattered
+
+An early run passed a resource version container to VEHelper instead of its
+`extracted/` payload. The MP4 still encoded, but the effect frames were
+pixel-identical to the no-effect baseline and the native log said the effect
+had no valid `config.json`. The resolver now prefers the extracted payload,
+and the renderer-log audit rejects missing effect configuration as well as
+sticker and transition parser failures.
+
+A successfully encoded MP4 is therefore not sufficient evidence that a
+resource rendered. Require all three: the extracted payload path, a clean
+native log, and a measured pixel difference in the intended frame window.
+
+## What “same” means
+
+The validated equality is limited and explicit:
+
+- same vertical resolution class and frame count;
+- same hook, acceptance, and expansion event frames;
+- same four-state narrative rhythm;
+- a real CapCut effect loaded from an exact resource ID;
+- no unresolved VEHelper path or native resource parser failure.
+
+It does not mean the same footage, UI artwork, music, brand, or pixels. Those
+remain original to the reference owner and are deliberately not copied.

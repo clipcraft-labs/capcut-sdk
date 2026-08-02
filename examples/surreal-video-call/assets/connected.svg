@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#ede9fe"/><stop offset="1" stop-color="#ccfbf1"/></linearGradient></defs><rect width="1080" height="1920" fill="url(#bg)"/>
+  <rect x="55" y="90" width="970" height="1450" rx="70" fill="#111827"/><circle cx="110" cy="145" r="13" fill="#f43f5e"/><circle cx="150" cy="145" r="13" fill="#fde047"/><circle cx="190" cy="145" r="13" fill="#22c55e"/>
+  <text x="540" y="160" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" fill="#fff">Renderer • connected</text>
+  <circle cx="540" cy="700" r="340" fill="#14b8a6"/><rect x="355" y="515" width="370" height="370" rx="92" fill="#7c3aed" transform="rotate(12 540 700)"/><text x="540" y="730" text-anchor="middle" font-family="monospace" font-size="78" font-weight="700" fill="#fff">JSON</text>
+  <rect x="105" y="1120" width="870" height="300" rx="44" fill="#312e81"/><text x="540" y="1225" text-anchor="middle" font-family="monospace" font-size="39" fill="#a7f3d0">VEHelper: resource ready</text><text x="540" y="1300" text-anchor="middle" font-family="monospace" font-size="39" fill="#a7f3d0">Mojo: frame 450 / 450</text>
+  <circle cx="410" cy="1690" r="72" fill="#fff"/><text x="410" y="1712" text-anchor="middle" font-size="55">▣</text><circle cx="540" cy="1690" r="72" fill="#fff"/><text x="540" y="1712" text-anchor="middle" font-size="55">●</text><circle cx="670" cy="1690" r="72" fill="#f43f5e"/><text x="670" y="1712" text-anchor="middle" font-size="55" fill="#fff">×</text>
+</svg>

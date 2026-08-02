@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs>
+  <rect width="1080" height="1920" fill="#f5f3ff"/>
+  <rect x="-90" y="-120" width="460" height="1200" rx="230" fill="url(#g)"/>
+  <rect x="710" y="700" width="460" height="1320" rx="230" fill="url(#g)"/>
+  <circle cx="735" cy="280" r="210" fill="#fde047"/>
+  <text x="540" y="970" text-anchor="middle" font-family="Arial, sans-serif" font-size="76" font-weight="700" fill="#111827">CLI, PICK UP.</text>
+  <text x="540" y="1060" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="#374151">a surreal render call</text>
+</svg>

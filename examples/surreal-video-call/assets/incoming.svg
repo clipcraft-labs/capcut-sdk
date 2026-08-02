@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs>
+  <rect width="1080" height="1920" fill="#f5f3ff"/><rect x="-90" y="-120" width="460" height="1200" rx="230" fill="url(#g)"/><rect x="710" y="700" width="460" height="1320" rx="230" fill="url(#g)"/><circle cx="735" cy="280" r="210" fill="#fde047"/>
+  <rect x="55" y="80" width="970" height="570" rx="72" fill="#111827" fill-opacity=".93"/>
+  <circle cx="165" cy="195" r="62" fill="#14b8a6"/><path d="M128 195h74M165 158v74" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+  <text x="255" y="180" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#fff">Renderer</text><text x="255" y="235" font-family="Arial, sans-serif" font-size="32" fill="#c4b5fd">video render request</text>
+  <circle cx="835" cy="190" r="55" fill="#22c55e"/><text x="835" y="207" text-anchor="middle" font-size="45" fill="#fff">✓</text><circle cx="955" cy="190" r="55" fill="#f43f5e"/><text x="955" y="207" text-anchor="middle" font-size="45" fill="#fff">×</text>
+  <rect x="105" y="310" width="870" height="270" rx="46" fill="#312e81"/><text x="540" y="430" text-anchor="middle" font-family="monospace" font-size="44" fill="#fff">clipcraft project render</text><text x="540" y="500" text-anchor="middle" font-family="monospace" font-size="28" fill="#a7f3d0">project.json → output.mp4</text>
+</svg>

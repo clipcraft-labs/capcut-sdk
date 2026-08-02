@@ -1,0 +1,22 @@
+{
+  "fps": 30,
+  "reference": {
+    "url": "https://www.tiktok.com/@apple/video/7613820709629971725",
+    "duration_seconds": 15.023311,
+    "source_fps": 29.97,
+    "source_frames": 450
+  },
+  "events": [
+    {"name": "incoming UI appears", "reference_seconds": 0.900901, "reference_frame_30fps": 27, "project_frame": 27},
+    {"name": "call accepted", "reference_seconds": 7.040374, "reference_frame_30fps": 211, "project_frame": 211},
+    {"name": "call window expands", "reference_seconds": 8.375042, "reference_frame_30fps": 251, "project_frame": 251}
+  ],
+  "effect_validation": {
+    "resource_id": "7399465317946264838",
+    "baseline_changed_frames": 50,
+    "first_changed_frame": 211,
+    "last_changed_frame": 260,
+    "mean_ssim_across_changed_frames": 0.94647164
+  },
+  "tolerance_frames": 1
+}

@@ -34,6 +34,8 @@ navigation:
             path: docs/pages/desktop.mdx
           - page: Headless rendering
             path: docs/pages/headless-rendering.mdx
+          - page: Recreate a viral edit rhythm
+            path: docs/pages/surreal-video-call.mdx
       - section: Safety
         contents:
           - page: Privacy and public repositories
