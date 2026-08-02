@@ -57,7 +57,7 @@ The source is 1080×1920, 29.97 fps, 450 frames, and 15.023 seconds. For a
 This is frame-matched structure, not pixel identity. The example replaces the
 original expression with a “Clipcraft calls the renderer” joke.
 
-## Get the example
+## Build it one line at a time
 
 The source files live in
 [`examples/surreal-video-call`](https://github.com/clipcraft-labs/capcut-sdk/tree/main/examples/surreal-video-call).
@@ -68,8 +68,53 @@ cd examples/surreal-video-call
 ./make-assets.sh
 ```
 
-The Project JSON uses exact frame boundaries. Decimal seconds are only the JSON
-representation of frames 27, 211, and 251 on a 30 fps canvas.
+Start `project.json` with the canvas and empty timeline:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/project.v1.schema.json",
+  "version": 1,
+  "name": "Surreal Video Call — frame-matched style study",
+  "target": {"app": "capcut", "version": "9.1.0", "os": "mac"},
+  "canvas": {"width": 1080, "height": 1920, "fps": 30, "ratio": "9:16"},
+  "resources": {},
+  "tracks": [{"type": "image", "name": "Four frame-locked states", "items": []}],
+  "operations": []
+}
+```
+
+Add the four generated assets to `tracks[0].items`, one timeline line at a time:
+
+```json
+{"src":"assets/intro.png",     "at":0,        "duration":0.9,      "ref":"intro",     "fit":"cover"}
+{"src":"assets/incoming.png",  "at":0.9,      "duration":6.133333, "ref":"incoming",  "fit":"cover"}
+{"src":"assets/accepting.png", "at":7.033333, "duration":1.333334, "ref":"accepting", "fit":"cover"}
+{"src":"assets/connected.png", "at":8.366667, "duration":6.633334, "ref":"connected", "fit":"cover"}
+```
+
+Each object is one clip: `src` selects the asset, `at` places it on the timeline,
+`duration` sets its length, and `ref` gives later operations a readable target.
+The decimal seconds represent exact frame boundaries 27, 211, and 251 at 30 fps.
+
+Search CapCut's catalogue and copy the selected ID:
+
+```bash
+clipcraft catalog effects search flash
+```
+
+Add that ID as one line inside `resources`. No cache path or separate resolve
+command is needed:
+
+```json
+"hook-flash": {"id": "7399465317946264838"}
+```
+
+Finally, add one operation line. The operation type tells Clipcraft that the ID
+must be resolved with native effect semantics:
+
+```json
+{"type":"effect", "target":"accepting", "resource":"hook-flash", "intensity":0.42}
+```
 
 ## Complete Project JSON
 
@@ -92,6 +137,11 @@ SVG sources in the example directory.
     "height": 1920,
     "fps": 30,
     "ratio": "9:16"
+  },
+  "resources": {
+    "hook-flash": {
+      "id": "7399465317946264838"
+    }
   },
   "tracks": [
     {
@@ -140,23 +190,6 @@ SVG sources in the example directory.
 }
 ```
 
-## Resolve the CapCut effect ID
-
-The example adds one native CapCut effect during the acceptance beat. Resolve
-the exact ID to the same readable key used by `project.json`:
-
-```bash
-clipcraft resolve id 7399465317946264838 \
-  --kind effect \
-  --as hook-flash \
-  --lock clipcraft.lock
-```
-
-The project never contains a CapCut cache path. `resolve` writes the provider
-ID to the lock. During `project render`, Clipcraft refreshes the bundle URL,
-downloads and verifies the bundle in the local resource cache, packages it,
-and writes the ID-to-local-path map consumed by VEHelper.
-
 ## Render without opening CapCut
 
 The public wheels do not redistribute CapCut or the verified native runner.
@@ -166,13 +199,14 @@ On a machine with CapCut Desktop 9.1.0 for macOS and an authorized runner, use:
 export CLIPCRAFT_HEADLESS_RENDERER=/absolute/path/to/render_capcut_headless.sh
 
 clipcraft project render project.json \
-  --lock clipcraft.lock \
   --work-dir build/headless \
   --exact-frames 450 \
   --out build/surreal-video-call.mp4
 ```
 
-This single command validates and compiles the JSON, resolves resource IDs,
+This is the only project command required. It validates the JSON, automatically
+resolves IDs declared in `resources`, creates or reuses `clipcraft.lock`,
+refreshes missing bundles, compiles the timeline,
 packages local resource paths, runs preflight, invokes the native renderer
 without opening the Desktop UI, probes the MP4, and audits the VEHelper log.
 CapCut’s native exporter can include one boundary frame when an effect ends at

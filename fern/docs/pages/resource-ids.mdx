@@ -1,16 +1,31 @@
 # Resolve exact resource IDs
 
 Clipcraft separates the ID a user supplies from the local path required by the
-native renderer. A project uses a readable lock key; the lock records the exact
-CapCut ID; packaging resolves and copies the bundle; the render package contains
+native renderer. Put the searched ID directly in `project.json`; rendering
+creates the lock, resolves and copies the bundle, and gives the native renderer
 the final absolute path.
 
 ```text
-resource ID -> clipcraft.lock -> verified local bundle -> packaged path
+project.json resource ID -> managed lock -> verified local bundle -> packaged path
             -> renderer resource map -> VEHelper
 ```
 
-## Exact visual resource ID
+## Normal workflow: declare the searched ID
+
+```json
+{
+  "resources": {"hero-effect": {"id": "RESOURCE_ID"}},
+  "operations": [
+    {"type":"effect", "target":"hero", "resource":"hero-effect"}
+  ]
+}
+```
+
+Then run `clipcraft project render project.json --out output.mp4`. The operation
+type supplies the render semantics, so most users do not need `--kind`,
+`resolve`, or `--lock`.
+
+## Advanced workflow: resolve explicitly
 
 ```bash
 clipcraft resolve id RESOURCE_ID \
@@ -74,10 +89,11 @@ way.
 
 ## What the project stores
 
-Projects contain lock keys, not machine-specific CapCut cache paths:
+Projects contain readable resource keys and catalogue IDs, not machine-specific
+CapCut cache paths:
 
 ```json
-{"type":"filter","target":"hero","resource":"street-filter","intensity":0.35}
+{"resources":{"street-filter":{"id":"RESOURCE_ID"}},"operations":[{"type":"filter","target":"hero","resource":"street-filter","intensity":0.35}]}
 ```
 
 The package stage injects local paths only into the disposable render draft.

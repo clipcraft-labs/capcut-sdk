@@ -203,7 +203,7 @@ clipcraft resolve music-id MUSIC_ID --as music --lock clipcraft.lock
 clipcraft project build project.json --lock clipcraft.lock --out build/draft
 clipcraft project package build/draft --lock clipcraft.lock --out build/package
 clipcraft project render-preflight build/package
-clipcraft project render project.json --lock clipcraft.lock \
+clipcraft project render project.json \
   --renderer /absolute/path/to/runner --out output.mp4
 ```
 

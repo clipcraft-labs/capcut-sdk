@@ -21,7 +21,6 @@ or:
 
 ```bash
 clipcraft project render project.json \
-  --lock clipcraft.lock \
   --asset-store .clipcraft/assets \
   --renderer /absolute/path/to/render_capcut_headless.sh \
   --out output.mp4
@@ -40,9 +39,9 @@ native log to `OUTPUT_FILE.vehelper.log`.
 
 The command performs these gates in order:
 
-1. validate and compile `project.json`;
-2. refresh missing signed bundle URLs when online;
-3. resolve installed, locked, and explicitly supplied resources;
+1. validate `project.json` and resolve its declared CapCut IDs;
+2. create or reuse the managed `clipcraft.lock` and refresh missing bundle URLs;
+3. compile and resolve installed, cached, and explicitly supplied resources;
 4. recursively package declared dependencies and fonts;
 5. replace ID placeholders with package-owned paths;
 6. reject missing, external, modified, or unresolved paths;

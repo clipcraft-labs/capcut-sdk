@@ -10,6 +10,7 @@ The versioned Project document is vendor-neutral source data. It defines:
 - canvas width, height, and frame rate;
 - video, audio, and text tracks;
 - item timing and reusable `ref` names;
+- searchable CapCut IDs declared in `resources`;
 - effect, filter, transition, caption-template, body-effect, sticker,
   animation, text-animation, audio-effect, font, text-effect, and mask
   operations.
@@ -21,8 +22,18 @@ clipcraft project validate project.json
 ```
 
 Supported track types are `video`, `image`, `audio`, and `text`. A local media
-item uses `src` relative to `project.json`; a catalogue-backed media item uses a
-lock key in `resource`. Every operation target is the `ref` of an existing item.
+item uses `src` relative to `project.json`; a catalogue-backed item uses a
+readable key in `resource`. Declare the key and copied catalogue ID directly:
+
+```json
+"resources": {
+  "hero-blur": {"id": "7399465317946264838"}
+}
+```
+
+Every operation target is the `ref` of an existing item. `project render`
+infers resource semantics from the operation or track, then manages the lock
+and bundle cache automatically.
 
 | Operation | Typical target | Resource semantics |
 | --- | --- | --- |
@@ -46,10 +57,13 @@ not from a guessed local filename.
 The published JSON Schema is available at
 `https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/project.v1.schema.json`.
 
-## `clipcraft.lock`
+## Generated `clipcraft.lock`
 
-The lockfile makes a dynamic catalogue selection reproducible. Project
-operations refer to its keys instead of hard-coding CapCut IDs:
+The lockfile is generated implementation state. Users normally edit only
+`project.json` and run `clipcraft project render project.json --out output.mp4`.
+Clipcraft creates `clipcraft.lock` beside the project, reuses matching entries,
+and refreshes missing bundles. An explicit `--lock` remains available for CI or
+advanced workflows.
 
 ```json
 {
@@ -67,8 +81,7 @@ operations refer to its keys instead of hard-coding CapCut IDs:
 }
 ```
 
-Create entries with `clipcraft resolve` rather than copying raw API response
-bodies. Music and catalogue media use an `asset_hash` that resolves through the
+Do not copy raw API response bodies into either file. Music and catalogue media use an `asset_hash` that resolves through the
 local content-addressed asset store. Effect bundles can require an expiring
 signed download URL while packaging; treat a working lock as private unless it
 has been manually sanitized for publication.
@@ -79,7 +92,8 @@ The lockfile schema is available at
 ## Build contract
 
 ```text
-project.json + clipcraft.lock + local assets
+project.json + local assets
+  -> automatic ID resolution and managed clipcraft.lock
   -> version adapter
   -> CapCut draft files
   -> resource package and ID-to-path map
