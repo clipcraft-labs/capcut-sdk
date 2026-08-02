@@ -22,10 +22,10 @@ python -m pip install -e .
 - [Unified Clipcraft CLI](https://github.com/clipcraft-labs/clipcraft-cli)
 
 The documentation includes the complete
-[exact resource-ID workflow](https://clipcraft-labs.docs.buildwithfern.com/resource-ids),
-[Project JSON pipeline](https://clipcraft-labs.docs.buildwithfern.com/clipcraft-workflow),
-[headless runner contract](https://clipcraft-labs.docs.buildwithfern.com/headless-rendering),
-and [public repository safety rules](https://clipcraft-labs.docs.buildwithfern.com/privacy).
+[exact resource-ID workflow](https://clipcraft-labs.docs.buildwithfern.com/guides/get-started/resolve-exact-resource-i-ds),
+[Project JSON pipeline](https://clipcraft-labs.docs.buildwithfern.com/guides/get-started/build-your-first-project),
+[headless runner contract](https://clipcraft-labs.docs.buildwithfern.com/guides/build-projects/headless-rendering),
+and [public repository safety rules](https://clipcraft-labs.docs.buildwithfern.com/guides/safety/privacy-and-public-repositories).
 
 ## Quick start
 
