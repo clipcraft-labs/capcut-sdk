@@ -35,12 +35,12 @@ class TemplatesClient:
 
     def collections(self, *, collection_type: int = 0, sdk_version: str = "9.1.0") -> list[TemplateCollection]:
         body = {"collection_type": collection_type, "sdk_version": sdk_version}
-        data = self._transport.post("/lv/v1/pc/replicate/get_collections", params=_params(self._transport.config), json_body=body, base_url=self._transport.config.base_url).get("data") or {}
+        data = self._transport.post("/lv/v1/pc/replicate/get_collections", params=_params(self._transport.config), json_body=body, base_url=self._transport.config.feed_base_url).get("data") or {}
         return [TemplateCollection.from_dict(value) for value in data.get("collections") or []]
 
     def list(self, collection_id: str | int, *, cursor: str | int = 0, count: int = 32, scene: str = "edit_page-Template", sdk_version: str = "9.1.0") -> CursorPage[Template]:
         body = {"id": collection_id, "cursor": cursor, "count": count, "scene": scene, "sdk_version": sdk_version}
-        data = self._transport.post("/lv/v1/pc/replicate/get_collection_templates", params=_params(self._transport.config), json_body=body, base_url=self._transport.config.base_url).get("data") or {}
+        data = self._transport.post("/lv/v1/pc/replicate/get_collection_templates", params=_params(self._transport.config), json_body=body, base_url=self._transport.config.feed_base_url).get("data") or {}
         return CursorPage([Template.from_dict(value) for value in data.get("item_list") or []], str(data.get("new_cursor")) if data.get("new_cursor") is not None else None, bool(data.get("has_more")), data)
 
     def iter(self, collection_id: str | int, *, cursor: str | int = 0, count: int = 32, scene: str = "edit_page-Template", sdk_version: str = "9.1.0"):

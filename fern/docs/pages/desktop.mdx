@@ -1,8 +1,8 @@
 # CapCut Desktop integration
 
-Clipcraft can compile and register a draft locally, but it does not run a
-remote CapCut renderer. CapCut Desktop remains responsible for displaying,
-editing, rendering, and exporting the final video.
+Clipcraft can compile, package, preflight, and register a draft locally. The
+unified CLI can also orchestrate a local GUI-less export when the user supplies
+a compatible native runner. There is no hosted or remote CapCut renderer.
 
 ## Compatibility
 
@@ -15,6 +15,12 @@ an unverified version-specific layout.
 A build includes the primary draft JSON, metadata, timeline project index,
 timeline backup files, auxiliary JSON, and copied content-addressed media. It
 deliberately omits platform device, disk, and network identifiers.
+
+During packaging, catalogue resource IDs are resolved from a verified lock,
+the installed Desktop cache, an explicit `ID=PATH` override, or an additional
+resource root. Bundles are copied into the package and recorded in
+`clipcraft_resources.json`; the native runner receives the resulting
+resource-ID-to-path map.
 
 ## Plan-first registration
 
@@ -45,3 +51,8 @@ clipcraft project open DRAFT
 
 Always inspect generated drafts and keep backups. Desktop registration changes
 local CapCut metadata; it does not upload the project or export a video.
+
+For GUI-less export, do not register or open the draft. Follow
+[Headless rendering](./headless-rendering.mdx). The public packages do not
+redistribute the native runner, CapCut, VEHelper, dynamic libraries, models, or
+catalogue resources.

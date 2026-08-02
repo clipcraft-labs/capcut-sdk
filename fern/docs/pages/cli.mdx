@@ -190,3 +190,22 @@ settings.
   identifiers.
 - Do not put real device identifiers, cookies, or response dumps in source
   control.
+
+## Unified project CLI
+
+The `capcut` command exposes direct SDK operations. The separate `clipcraft`
+command provides exact-ID locking, Project JSON compilation, resource
+packaging, Desktop registration, and optional headless-render orchestration.
+
+```bash
+clipcraft resolve id RESOURCE_ID --as effect --lock clipcraft.lock
+clipcraft resolve music-id MUSIC_ID --as music --lock clipcraft.lock
+clipcraft project build project.json --lock clipcraft.lock --out build/draft
+clipcraft project package build/draft --lock clipcraft.lock --out build/package
+clipcraft project render-preflight build/package
+clipcraft project render project.json --lock clipcraft.lock \
+  --renderer /absolute/path/to/runner --out output.mp4
+```
+
+See [Resolve exact resource IDs](./resource-ids.mdx) and
+[Headless rendering](./headless-rendering.mdx) for the complete contracts.

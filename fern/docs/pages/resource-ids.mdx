@@ -1,0 +1,93 @@
+# Resolve exact resource IDs
+
+Clipcraft separates the ID a user supplies from the local path required by the
+native renderer. A project uses a readable lock key; the lock records the exact
+CapCut ID; packaging resolves and copies the bundle; the render package contains
+the final absolute path.
+
+```text
+resource ID -> clipcraft.lock -> verified local bundle -> packaged path
+            -> renderer resource map -> VEHelper
+```
+
+## Exact visual resource ID
+
+```bash
+clipcraft resolve id RESOURCE_ID \
+  --as hero-effect \
+  --lock clipcraft.lock
+```
+
+The command first calls Desktop's exact artist-resource endpoint. If that does
+not return the ID, it may read CapCut's installed Resource SDK HTTP cache. The
+cache fallback is read-only and does not require CapCut to be running.
+
+Automatic kind detection currently recognizes:
+
+- effects, filters, transitions, and caption templates;
+- body/face effects and stickers;
+- video/text animations, audio effects, fonts, text effects, and masks;
+- catalogue images and stock video.
+
+Unknown types fail closed. Use `--kind` only after confirming the material's
+Desktop timeline semantics; an override does not make an incompatible bundle
+renderable.
+
+| Input | Command | Local content download |
+| --- | --- | --- |
+| exact visual/effect ID | `clipcraft resolve id ID --as KEY` | bundles download during package/render |
+| exact image/stock-video ID | `clipcraft resolve id ID --as KEY --asset-store DIR` | immediately into SHA-256 store |
+| exact music ID | `clipcraft resolve music-id ID --as KEY --asset-store DIR` | immediately into SHA-256 store |
+| search result | `clipcraft resolve effect QUERY --pick N --as KEY` | bundles download during package/render |
+| panel/category item | `clipcraft resolve resource ... --pick N --as KEY` | bundles download during package/render |
+
+Catalogue images and stock video are content assets rather than effect bundles.
+Give the resolver an asset store:
+
+```bash
+clipcraft resolve id RESOURCE_ID \
+  --as background-media \
+  --lock clipcraft.lock \
+  --asset-store .clipcraft/assets
+```
+
+Use that key in a track item:
+
+```json
+{"resource":"background-media","at":0,"duration":3,"ref":"background"}
+```
+
+## Exact music ID
+
+```bash
+clipcraft resolve music-id MUSIC_ID \
+  --as background-music \
+  --lock clipcraft.lock \
+  --asset-store .clipcraft/assets
+```
+
+Desktop 9.1.0 contains a private batch-song request, but its wire format is not
+part of the verified public contract. Clipcraft therefore scans the currently
+advertised collections for an exact ID match, downloads the preview, and stores
+it by SHA-256. IDs removed from the current catalogue cannot be resolved this
+way.
+
+## What the project stores
+
+Projects contain lock keys, not machine-specific CapCut cache paths:
+
+```json
+{"type":"filter","target":"hero","resource":"street-filter","intensity":0.35}
+```
+
+The package stage injects local paths only into the disposable render draft.
+This keeps `project.json` portable and prevents a public project from exposing a
+user name or home-directory layout.
+
+## Availability limits
+
+An ID can still be unavailable because it was removed, is restricted by region,
+account, VIP status, or commercial policy, is cloud-generated, or belongs to an
+unknown future type. “Exact ID” means deterministic selection when the provider
+makes that resource available; it is not a promise that every historical ID is
+downloadable.

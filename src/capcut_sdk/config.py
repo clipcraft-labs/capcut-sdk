@@ -33,6 +33,7 @@ class SDKConfig:
     effect_sdk_version: str = "21.8.0"
     service: str = "heycan-api-sg"
     editor_service: str = "editor-api-sg"
+    feed_service: str = "feed-api-sg"
     timeout: float = 30.0
     mode: str = "offline"
 
@@ -43,3 +44,7 @@ class SDKConfig:
     @property
     def editor_base_url(self) -> str:
         return f"https://{self.editor_service}.capcutapi.com"
+
+    @property
+    def feed_base_url(self) -> str:
+        return f"https://{self.feed_service}.capcutapi.com"

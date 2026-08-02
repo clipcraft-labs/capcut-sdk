@@ -52,8 +52,9 @@ clipcraft resolve resource \
 ```
 
 `clipcraft.lock` records normalized provider, resource, effect, panel, and
-category identifiers. It intentionally excludes preview URLs and credentials.
-Review a lockfile before committing it.
+category identifiers. Review a lockfile before committing it: local working
+locks can contain expiring signed bundle URLs even though preview URLs and
+credentials are removed.
 
 Music resolution downloads the selected preview into the local SHA-256 asset
 store and writes only its hash and size to the lockfile:
@@ -65,6 +66,18 @@ clipcraft resolve music COLLECTION_ID \
   --pick 1 \
   --as background-music \
   --lock clipcraft.lock
+```
+
+Resolve exact visual or music IDs without choosing a result position:
+
+```bash
+clipcraft resolve id RESOURCE_ID \
+  --as hero-effect \
+  --lock clipcraft.lock
+clipcraft resolve music-id MUSIC_ID \
+  --as background-music \
+  --lock clipcraft.lock \
+  --asset-store .clipcraft/assets
 ```
 
 ## 3. Create `project.json`
@@ -119,7 +132,35 @@ are rejected by default because their draft layouts may differ. The
 `--allow-unsupported-version` flag is an explicit escape hatch for users who
 have manually reviewed another Desktop format.
 
-## 5. Register with CapCut Desktop
+## 5. Package and preflight
+
+```bash
+clipcraft project package build/demo \
+  --lock clipcraft.lock \
+  --out build/render-package
+clipcraft project render-preflight build/render-package
+```
+
+Packaging turns provider IDs into package-owned local paths and recursively
+includes declared dependencies. Preflight rejects unresolved placeholders,
+missing files, external paths, and resource hash mismatches.
+
+## 6. Optional GUI-less export
+
+Configure a compatible native runner and invoke the complete pipeline:
+
+```bash
+clipcraft project render project.json \
+  --lock clipcraft.lock \
+  --asset-store .clipcraft/assets \
+  --renderer /absolute/path/to/render_capcut_headless.sh \
+  --out output.mp4
+```
+
+The public wheel does not contain this runner or any CapCut binary. See
+[Headless rendering](./headless-rendering.mdx) for the runner contract.
+
+## 7. Register with CapCut Desktop
 
 Build directly inside the CapCut drafts directory or move the completed draft
 there. Registration requires the draft to be a direct child of the selected
@@ -147,7 +188,8 @@ the generated project in CapCut Desktop and use its export UI.
 
 ## What to commit
 
-Safe project repositories normally contain `project.json`, a reviewed
-`clipcraft.lock`, and media you are licensed to distribute. Do not commit raw
-API responses, signed URLs, profile files, device IDs, cookies, downloaded
-catalogue assets, CapCut application files, or Desktop project indexes.
+Safe project repositories normally contain `project.json`, a manually reviewed
+and sanitized `clipcraft.lock`, and media you are licensed to distribute. Do
+not commit raw API responses, signed URLs, profile files, device IDs, cookies,
+downloaded catalogue assets, `.clipcraft/`, CapCut application files, renderer
+logs, render work directories, or Desktop project indexes.

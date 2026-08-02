@@ -9,11 +9,16 @@ from pathlib import Path
 
 PRIVATE_DIRS = {"captures", "harness/runtime", ".git", ".venv", "build", "dist", "generated"}
 TEXT_SUFFIXES = {".py", ".md", ".yaml", ".yml", ".toml", ".json", ".txt", ".cfg", ".ini"}
+PROHIBITED_SUFFIXES = {".dylib", ".dll", ".so", ".model", ".mp4", ".mov", ".m4a", ".mp3", ".zip", ".db", ".sqlite"}
 PATTERNS = (
+    re.compile(r"/Users/[^/\s]+"),
+    re.compile(r"/home/[^/\s]+"),
+    re.compile(r"(?i)[A-Z]:\\Users\\[^\\\s]+"),
     re.compile(r"\b(?:Authorization|Cookie)\s*:\s*\S+"),
     re.compile(r"(?i)\b(?:x-argus|x-ladon)\s*:\s*[A-Za-z0-9+/=]{32,}"),
     re.compile(r"(?i)\b(?:x-gorgon)\s*:\s*[0-9a-f]{32,}"),
     re.compile(r"(?i)\b(?:odin_tt|access_token|api[_-]?key)\s*[=:]\s*[^\s<]"),
+    re.compile(r"(?i)[?&](?:x-signature|x-expires|signature|session_token|access_token)="),
 )
 
 
@@ -25,13 +30,20 @@ def is_private(path: Path) -> bool:
 def audit(root: Path) -> list[str]:
     findings = []
     for path in root.rglob("*"):
-        if not path.is_file() or is_private(path) or path.suffix.lower() not in TEXT_SUFFIXES:
+        if not path.is_file() or is_private(path):
+            continue
+        if path.suffix.lower() in PROHIBITED_SUFFIXES:
+            findings.append(str(path))
+            continue
+        if path.suffix.lower() not in TEXT_SUFFIXES:
             continue
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
         for number, line in enumerate(text.splitlines(), 1):
+            if path.name == "public_audit.py" and "re.compile" in line:
+                continue
             if any(pattern.search(line) for pattern in PATTERNS):
                 findings.append(f"{path}:{number}")
     return findings

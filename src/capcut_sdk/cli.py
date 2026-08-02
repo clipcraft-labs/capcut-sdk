@@ -164,7 +164,7 @@ def main(argv: list[str] | None = None) -> int:
             panel = client.panels.info(panel=args.panel)
             categories = [category_record(category, panel=args.panel) for category in panel.categories] if args.format == "catalog" else [category.raw for category in panel.categories]
             print(json.dumps({"categories": categories}, ensure_ascii=False))
-        elif args.music_command == "collections":
+        elif args.command == "music" and args.music_command == "collections":
             collections = client.music.collections(effects=args.effects, only_commercial=args.only_commercial)
             items = [CatalogResource.from_collection(collection, effects=args.effects).to_dict() for collection in collections] if args.format == "catalog" else [collection.raw for collection in collections]
             print(json.dumps(items, ensure_ascii=False))
@@ -196,7 +196,7 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 items = [CatalogResource.from_song(song).to_dict() for song in page.items] if args.format == "catalog" else [song.raw for song in page.items]
                 print(json.dumps({"items": items, "next_offset": page.next_offset, "has_more": page.has_more}, ensure_ascii=False))
-        elif args.templates_command == "collections":
+        elif args.command == "templates" and args.templates_command == "collections":
             collections = client.templates.collections()
             print(json.dumps([collection.raw for collection in collections], ensure_ascii=False))
         elif args.command == "templates":

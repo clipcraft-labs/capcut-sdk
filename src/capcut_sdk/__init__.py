@@ -7,8 +7,9 @@ from .signing import CapCutSigner
 from .profiles import ProfileStore, config_from_environment
 from .cache import JsonCache
 from .search import RecordIndex
-from .catalog import PANEL_KINDS, CatalogCategory, CatalogResource
+from .catalog import EFFECT_TYPE_KINDS, PANEL_KINDS, CatalogCategory, CatalogResource, infer_effect_kind
+from .desktop_cache import DesktopCacheCatalog, default_ressdk_roots
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
-__all__ = ["ApiError", "CapCutClient", "CapCutSigner", "CatalogCategory", "CatalogResource", "ConfigurationError", "DeviceProfile", "JsonCache", "PANEL_KINDS", "ProfileStore", "RecordIndex", "SDKConfig", "config_from_environment", "__version__"]
+__all__ = ["ApiError", "CapCutClient", "CapCutSigner", "CatalogCategory", "CatalogResource", "ConfigurationError", "DesktopCacheCatalog", "DeviceProfile", "EFFECT_TYPE_KINDS", "JsonCache", "PANEL_KINDS", "ProfileStore", "RecordIndex", "SDKConfig", "config_from_environment", "default_ressdk_roots", "infer_effect_kind", "__version__"]

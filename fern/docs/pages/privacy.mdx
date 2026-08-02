@@ -1,0 +1,41 @@
+# Privacy and public repositories
+
+Treat provider responses and local Desktop state as private until reviewed.
+
+## Never commit
+
+- CapCut profile files, cookies, login tokens, request signatures, device IDs,
+  install IDs, account IDs, or raw network captures;
+- signed download URLs or raw API response bodies;
+- `.clipcraft/` asset and resource caches;
+- downloaded music, effects, fonts, models, templates, stock media, or other
+  catalogue content;
+- CapCut application binaries, frameworks, dynamic libraries, VEHelper, or
+  Desktop database/index files;
+- render work directories, renderer logs, or absolute home-directory paths.
+
+## Usually safe after review
+
+- `project.json` using relative source-media paths;
+- a lockfile containing provider IDs, kind, display name, and hashes, after
+  removing signed URLs and account-specific metadata;
+- source media you own or are licensed to redistribute;
+- synthetic fixtures that contain no values copied from a live session.
+
+The current lock writer may retain a signed `download_url` for local packaging.
+That makes the working lock private by default. For a public example, remove the
+URL and rely on exact-ID refresh or replace the record with synthetic values.
+
+## Before publishing
+
+```bash
+git status --short --ignored
+git diff --check
+python tools/public_audit.py .
+git ls-files
+```
+
+Review every tracked and untracked file. Automated scanning is a final guard,
+not a substitute for inspecting the candidate commit. If a credential is ever
+published, revoke or rotate it and remove it from Git history; deleting the
+latest file is insufficient.

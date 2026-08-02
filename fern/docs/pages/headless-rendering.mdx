@@ -1,0 +1,82 @@
+# Headless rendering
+
+`clipcraft project render` orchestrates compilation, resource resolution,
+packaging, preflight checks, native export, media probing, and renderer-log
+auditing without opening the CapCut GUI.
+
+## Public and local components
+
+The public Python packages include the orchestrator, compiler, packager, and
+preflight checks. They do **not** redistribute CapCut, VEHelper, CapCut dynamic
+libraries, models, fonts, effects, or downloaded catalogue assets.
+
+The verified macOS native adapter is not included in the public wheel. To use
+the integrated command, supply a compatible local executable or script:
+
+```bash
+export CLIPCRAFT_HEADLESS_RENDERER=/absolute/path/to/render_capcut_headless.sh
+```
+
+or:
+
+```bash
+clipcraft project render project.json \
+  --lock clipcraft.lock \
+  --asset-store .clipcraft/assets \
+  --renderer /absolute/path/to/render_capcut_headless.sh \
+  --out output.mp4
+```
+
+The runner contract is:
+
+```text
+RUNNER RENDER_PACKAGE OUTPUT_FILE WAIT_SECONDS
+```
+
+It must exit non-zero on failure, create the requested output, and write its
+native log to `OUTPUT_FILE.vehelper.log`.
+
+## Pipeline
+
+The command performs these gates in order:
+
+1. validate and compile `project.json`;
+2. refresh missing signed bundle URLs when online;
+3. resolve installed, locked, and explicitly supplied resources;
+4. recursively package declared dependencies and fonts;
+5. replace ID placeholders with package-owned paths;
+6. reject missing, external, modified, or unresolved paths;
+7. invoke the configured native runner;
+8. validate the video with `ffprobe` when available;
+9. reject unresolved native resources and model-load failures in the log.
+
+The renderer receives an ID-to-path map generated from
+`clipcraft_resources.json`. The source Project JSON never needs a CapCut cache
+path.
+
+## Requirements and compatibility
+
+- macOS with an installed, licensed CapCut Desktop 9.1.0 is the verified target;
+- a locally supplied compatible native runner is required;
+- `ffprobe` is recommended for output validation;
+- source media and catalogue resources must be licensed for the intended use;
+- other CapCut versions and Windows are not currently verified.
+
+Do not copy CapCut application files into a project or release. Clipcraft does
+not grant rights to redistribute provider binaries or catalogue content.
+
+## Prepare without rendering
+
+Users without a native runner can still create a complete package and inspect
+it:
+
+```bash
+clipcraft project build project.json --lock clipcraft.lock --out build/draft
+clipcraft project package build/draft \
+  --lock clipcraft.lock \
+  --out build/render-package
+clipcraft project render-preflight build/render-package
+```
+
+A successful preflight proves package completeness, not native export
+compatibility.

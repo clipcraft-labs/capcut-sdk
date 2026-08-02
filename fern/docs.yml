@@ -24,12 +24,20 @@ navigation:
             path: docs/pages/profiles.mdx
           - page: Build your first project
             path: docs/pages/clipcraft-workflow.mdx
+          - page: Resolve exact resource IDs
+            path: docs/pages/resource-ids.mdx
       - section: Build projects
         contents:
           - page: Project JSON and lockfiles
             path: docs/pages/project-format.mdx
           - page: CapCut Desktop integration
             path: docs/pages/desktop.mdx
+          - page: Headless rendering
+            path: docs/pages/headless-rendering.mdx
+      - section: Safety
+        contents:
+          - page: Privacy and public repositories
+            path: docs/pages/privacy.mdx
       - section: Reference
         contents:
           - page: CLI commands

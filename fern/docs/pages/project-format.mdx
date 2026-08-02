@@ -10,13 +10,38 @@ The versioned Project document is vendor-neutral source data. It defines:
 - canvas width, height, and frame rate;
 - video, audio, and text tracks;
 - item timing and reusable `ref` names;
-- effect, filter, transition, and caption-template operations.
+- effect, filter, transition, caption-template, body-effect, sticker,
+  animation, text-animation, audio-effect, font, text-effect, and mask
+  operations.
 
 Validate it with:
 
 ```bash
 clipcraft project validate project.json
 ```
+
+Supported track types are `video`, `image`, `audio`, and `text`. A local media
+item uses `src` relative to `project.json`; a catalogue-backed media item uses a
+lock key in `resource`. Every operation target is the `ref` of an existing item.
+
+| Operation | Typical target | Resource semantics |
+| --- | --- | --- |
+| `effect` | video, image, text | scene/video effect bundle |
+| `filter` | video or image | filter bundle plus intensity |
+| `transition` | visual segment | transition bundle plus duration |
+| `caption-template` | text | subtitle template bundle |
+| `body-effect` | video or image | face/body effect and model dependencies |
+| `sticker` | any visual item | overlay bundle, position, scale, alpha |
+| `animation` | video or image | in/out/loop/group animation subtype |
+| `text-animation` | text | text animation subtype |
+| `audio-effect` | audio | audio effect bundle |
+| `font` | text | font resource and nested font path |
+| `text-effect` | text | word-art/text-effect bundle |
+| `mask` | video or image | mask bundle and geometry controls |
+
+Use the published schema as the authority for individual fields. Provider
+metadata such as animation subtype and mask resource type comes from the lock,
+not from a guessed local filename.
 
 The published JSON Schema is available at
 `https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/project.v1.schema.json`.
@@ -43,8 +68,10 @@ operations refer to its keys instead of hard-coding CapCut IDs:
 ```
 
 Create entries with `clipcraft resolve` rather than copying raw API response
-bodies. The compiler rejects secret-bearing URL query parameters. Music uses
-an `asset_hash` that resolves through the local content-addressed asset store.
+bodies. Music and catalogue media use an `asset_hash` that resolves through the
+local content-addressed asset store. Effect bundles can require an expiring
+signed download URL while packaging; treat a working lock as private unless it
+has been manually sanitized for publication.
 
 The lockfile schema is available at
 `https://raw.githubusercontent.com/clipcraft-labs/capcut-draft/main/schemas/lock.v1.schema.json`.
@@ -55,8 +82,21 @@ The lockfile schema is available at
 project.json + clipcraft.lock + local assets
   -> version adapter
   -> CapCut draft files
-  -> structural validation
+  -> resource package and ID-to-path map
+  -> structural and render preflight validation
 ```
 
 The generated CapCut JSON is never the source of truth. Rebuild it when the
 project, lockfile, compiler, or target adapter changes.
+
+## Path lifecycle
+
+```text
+project.json relative src / lock key
+  -> content-addressed media / ID placeholder in compiled draft
+  -> verified package-owned absolute path in render package
+  -> resource_id => packaged_path map passed to the native runner
+```
+
+Absolute render paths are intentionally confined to disposable build output.
+Do not copy a generated draft or render package into a public repository.

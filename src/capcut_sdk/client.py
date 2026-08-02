@@ -1,5 +1,7 @@
 """Top-level SDK client and first capture-backed resource."""
 
+from __future__ import annotations
+
 from typing import Any
 
 from .config import SDKConfig
@@ -51,6 +53,23 @@ class EffectsClient:
         body = {"app_id": self._transport.config.app_id, "effect_type": effect_type}
         data = self._transport.post("/artist/v1/effect/get_search_words", params=_common_params(self._transport.config), json_body=body).get("data") or {}
         return SearchWords(str(data.get("default_word") or ""), list(data.get("recommend_words") or []), list(data.get("hot_words") or []), data)
+
+    def get_by_ids(self, resource_ids: list[str], *, scene: str = "default") -> list[Effect]:
+        """Resolve exact artist resource IDs, including template dependencies."""
+        if not resource_ids:
+            return []
+        body = {
+            "app_id": self._transport.config.app_id,
+            "id_list": [str(value) for value in resource_ids],
+            "scene": scene,
+            "replicate_sdk_version": self._transport.config.effect_sdk_version,
+        }
+        data = self._transport.post(
+            "/artist/v1/effect/mget_artist_item",
+            params=_common_params(self._transport.config),
+            json_body=body,
+        ).get("data") or {}
+        return [Effect.from_dict(item) for item in data.get("effect_item_list") or []]
 
 
 class PanelsClient:

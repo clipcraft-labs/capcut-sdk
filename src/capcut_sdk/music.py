@@ -56,6 +56,27 @@ class MusicClient:
                 return
             offset = page.next_offset
 
+    def find_song_by_id(self, song_id: str | int, *, count: int = 50) -> tuple[Song, MusicCollection] | None:
+        """Find an exact song ID through Desktop's current music catalogue.
+
+        Desktop 9.1.0 contains a ``multi_get_songs`` request type, but its
+        wire format has not been verified.  Scanning the advertised
+        collections is slower, but it gives an exact, evidence-backed fallback
+        without guessing a private request schema.
+        """
+        target = str(song_id)
+        seen: set[str] = set()
+        for collection in self.collections():
+            if not collection.id or collection.id in seen:
+                continue
+            seen.add(collection.id)
+            collection_type = collection.collection_type or 0
+            for page in self.iter_songs(collection.id, collection_type=collection_type, count=count):
+                for song in page.items:
+                    if song.id == target:
+                        return song, collection
+        return None
+
 
 def _params(config) -> list[tuple[str, str]]:
     return [("aid", str(config.app_id)), ("device_id", config.device.device_id), ("language", config.language), ("region", config.region)]
